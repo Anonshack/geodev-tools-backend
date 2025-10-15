@@ -19,7 +19,6 @@ DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 DJANGO_APPS = [
@@ -35,7 +34,12 @@ PROJECT_INSTALLED_APPS = [
     'drf_yasg',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + PROJECT_INSTALLED_APPS
+THIRD_INSTALLED_APPS = [
+    'accounts',
+]
+
+# all apps
+INSTALLED_APPS = DJANGO_APPS + PROJECT_INSTALLED_APPS + THIRD_INSTALLED_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
