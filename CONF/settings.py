@@ -32,6 +32,8 @@ DJANGO_APPS = [
 ]
 PROJECT_INSTALLED_APPS = [
     'drf_yasg',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 THIRD_INSTALLED_APPS = [
@@ -125,7 +127,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+AUTH_USER_MODEL = 'accounts.User'
