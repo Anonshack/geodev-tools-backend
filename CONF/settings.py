@@ -135,3 +135,20 @@ REST_FRAMEWORK = {
     ),
 }
 AUTH_USER_MODEL = 'accounts.User'
+
+
+# email part
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'anonshack48@gmail.com'
+EMAIL_HOST_PASSWORD = 'jcow zprq yyvl wluq'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# SSL certificate fix
+import ssl
+import certifi
+
+ssl._create_default_https_context = ssl._create_unverified_context
+SSL_CERT_FILE = certifi.where()
