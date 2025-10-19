@@ -21,6 +21,8 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
     api_key = models.CharField(max_length=255, blank=True, null=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
@@ -43,6 +45,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.api_key = key
         self.save(update_fields=["api_key"])
         return key
+
+    def get_full_name(self):
+        return f"{self.first_name or ''} {self.last_name or ''}".strip()
+
+    def get_short_name(self):
+        return self.first_name or self.email
 
     def __str__(self):
         return self.email
