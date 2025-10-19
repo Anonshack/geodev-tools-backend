@@ -1,5 +1,9 @@
 from django.urls import path
-from accounts.views import GetAllUsers, ChangePasswordView, ProfileView
+from accounts.views import (
+    GetAllUsers,
+    ChangePasswordView,
+    ProfileView
+)
 
 urlpatterns = [
     path('users/', GetAllUsers.as_view(), name='get_all_users'),
