@@ -3,12 +3,13 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from .models import User
 
+
 class UserResource(resources.ModelResource):
     class Meta:
         model = User
         fields = (
-            "id", "username", "first_name", "last_name", "email",
-            "company_name", "is_staff", "is_superuser", "is_active",
+            "id", "email", "company_name", "phone_number",
+            "is_staff", "is_superuser", "is_active",
             "date_joined", "last_login",
         )
 
@@ -18,7 +19,7 @@ def make_active(modeladmin, request, queryset):
     queryset.update(is_active=True)
 
 
-@admin.action(description="Deactive selected users")
+@admin.action(description="Deactivate selected users")
 def make_inactive(modeladmin, request, queryset):
     queryset.update(is_active=False)
 
@@ -27,11 +28,11 @@ def make_inactive(modeladmin, request, queryset):
 class CustomUserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
     list_display = (
-        "id", "username", "email", "first_name", "last_name",
-        "company_name", "is_staff", "is_superuser", "is_active", "date_joined"
+        "id", "email", "company_name", "phone_number",
+        "is_staff", "is_superuser", "is_active", "date_joined",
     )
     list_filter = ("is_active", "is_staff", "is_superuser", "company_name")
-    search_fields = ("username", "email", "first_name", "last_name", "company_name")
+    search_fields = ("email", "company_name", "phone_number")
     ordering = ("-date_joined",)
     readonly_fields = ("last_login", "date_joined")
     actions = [make_active, make_inactive]

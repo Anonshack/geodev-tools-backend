@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      background: #f8fafc;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #333;
+      padding: 30px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .title {
+      color: #2563eb;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .footer {
+      margin-top: 25px;
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 class="title">👋 Hello {{ user.username }},</h2>
+    <p>You’ve successfully logged in to your GeoDev Tools account.</p>
+    <p><b>Time:</b> {{ login_time }}</p>
+    <p><b>IP Address:</b> {{ ip_address }}</p>
+    <p>If this wasn’t you, please reset your password immediately.</p>
+    <div class="footer">© 2025 GeoDev Tools</div>
+  </div>
+</body>
+</html>
+
