@@ -1,26 +1,35 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from .models import User
 from utils.email_service import send_email_notification
+from django.contrib.auth import get_user_model
 import logging
+User = get_user_model()
 
 logger = logging.getLogger(__name__)
 
-
 class UserRegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=6)
+    password = serializers.CharField(write_only=True, min_length=6, style={'input_type': 'password'})
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'company_name')
+        fields = ('id', 'username', 'email', 'company_name', 'password')
+
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already registered.")
+        return value
 
     def create(self, validated_data):
-        user = User(
-            email=validated_data['email'],
-            company_name=validated_data.get('company_name', '')
-        )
-        user.set_password(validated_data['password'])
-        user.save()
+        username = validated_data['username']
+        email = validated_data['email']
+        password = validated_data['password']
+        company_name = validated_data.get('company_name', '')
+        user = User.objects.create_user(email=email, username=username, password=password, company_name=company_name)
         return user
 
 
