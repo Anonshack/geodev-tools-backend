@@ -1,11 +1,12 @@
 from django.contrib.auth.password_validation import validate_password
-from rest_framework import serializers
 from utils.email_service import send_email_notification
 from django.contrib.auth import get_user_model
 import logging
+from rest_framework import serializers
 User = get_user_model()
 
 logger = logging.getLogger(__name__)
+
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6, style={'input_type': 'password'})
@@ -24,13 +25,35 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This email is already registered.")
         return value
 
+    def validate_company_name(self, value):
+        if not value:
+            return value
+        if len(value.strip()) < 3:
+            raise serializers.ValidationError("Company name is too short.")
+        if any(ch.isdigit() for ch in value):
+            raise serializers.ValidationError("Company name cannot contain numbers.")
+        if any(ch in "!@#$%^&*()_+=<>?/\\|{}[]~`" for ch in value):
+            raise serializers.ValidationError("Company name cannot contain special characters.")
+        if not any(ch.isalpha() for ch in value):
+            raise serializers.ValidationError("Company name must contain letters.")
+        fake_names = ["test", "company", "asd", "dasdsa", "unknown"]
+        if value.lower() in fake_names:
+            raise serializers.ValidationError("Invalid or placeholder company name.")
+        return value.title()
+
     def create(self, validated_data):
         username = validated_data['username']
         email = validated_data['email']
         password = validated_data['password']
         company_name = validated_data.get('company_name', '')
-        user = User.objects.create_user(email=email, username=username, password=password, company_name=company_name)
+        user = User.objects.create_user(
+            email=email,
+            username=username,
+            password=password,
+            company_name=company_name
+        )
         return user
+
 
 
 class UserSerializer(serializers.ModelSerializer):

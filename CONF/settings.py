@@ -4,11 +4,8 @@ import certifi
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
-
-# Load environment variables
 load_dotenv()
 
-# BASE_DIR configuration
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -34,6 +31,7 @@ PROJECT_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -44,6 +42,7 @@ INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + LOCAL_APPS
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -141,3 +140,11 @@ SIMPLE_JWT = {
 
 ssl._create_default_https_context = ssl._create_unverified_context
 SSL_CERT_FILE = certifi.where()
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:5500",
+    "http://127.0.0.1:1111",
+]
+
+CORS_ALLOW_CREDENTIALS = True
