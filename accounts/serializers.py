@@ -85,6 +85,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     def save(self, **kwargs):
         user = self.context['request'].user
         user.set_password(self.validated_data['new_password'])
+        user._password_changed = True
         user.save()
 
         send_email_notification(
