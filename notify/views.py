@@ -1,9 +1,11 @@
 from rest_framework import status, permissions
+from rest_framework.generics import DestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from .models import Notification
 from .serializers import NotificationSerializer
-from django.shortcuts import get_object_or_404
+
 
 class NotificationListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -16,8 +18,8 @@ class NotificationListCreateView(APIView):
     def post(self, request):
         serializer = NotificationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            notification = serializer.save()
-            return Response(NotificationSerializer(notification).data, status=status.HTTP_201_CREATED)
+            serializer.save(user=request.user)  # ✅ user = request.user qilib saqlaymiz
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -29,7 +31,21 @@ class NotificationDetailView(APIView):
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, pk):
+    def patch(self, request, pk):
         notification = get_object_or_404(Notification, pk=pk, user=request.user)
+        notification.is_read = True
+        notification.save(update_fields=['is_read'])
+        return Response({"detail": "Notification marked as read ✅"}, status=status.HTTP_200_OK)
+
+
+class NotificationDeleteAPIView(DestroyAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        notification = self.get_object()
         notification.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Notification deleted successfully ✅"}, status=status.HTTP_204_NO_CONTENT)

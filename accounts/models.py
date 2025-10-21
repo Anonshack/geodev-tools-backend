@@ -35,7 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
     api_key = models.CharField(max_length=255, blank=True, null=True)
-    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True, default='profiles/default_user_p.png')
     bio = models.TextField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
