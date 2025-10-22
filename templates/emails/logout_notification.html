@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logout Notification</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fb;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      background-color: #ffffff;
+      max-width: 600px;
+      margin: 40px auto;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #4e73df, #224abe);
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+    .content {
+      padding: 30px;
+      text-align: center;
+    }
+    .content p {
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4e73df;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    .footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #777;
+      background-color: #f8f9fc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>GeoDev Security Notification</h1>
+    </div>
+    <div class="content">
+      <p>Hi {{ user.username }},</p>
+      <p>
+        This is to confirm that you’ve successfully logged out of your GeoDev account.
+      </p>
+      <p>If it wasn’t you, please reset your password immediately for security reasons.</p>
+      <a href="https://geodev.com/reset-password" class="btn">Reset Password</a>
+    </div>
+    <div class="footer">
+      © 2025 GeoDev • All rights reserved
+    </div>
+  </div>
+</body>
+</html>

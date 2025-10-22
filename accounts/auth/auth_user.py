@@ -2,6 +2,7 @@ from datetime import datetime
 from django.template.loader import render_to_string
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, permissions
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from accounts.serializers import UserRegisterSerializer, UserSerializer
 from django.conf import settings
@@ -11,6 +12,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 import logging
+
+from notify.models import Notification
+from utils.email_service import send_email_notification
+
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
@@ -84,3 +89,33 @@ class LoginAPIView(APIView):
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
+
+
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+
+            user = request.user
+            Notification.objects.create(
+                user=user,
+                title="🚪 Logged Out",
+                message=f"Hi {user.username}, you have successfully logged out.",
+                type="system",
+            )
+            send_email_notification(
+                subject="You have logged out",
+                template_name="emails/logout_notification.html",
+                context={"user": user},
+                recipient_list=[user.email],
+            )
+
+            return Response({"detail": "Logout successful!"}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -32,6 +32,7 @@ PROJECT_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     "corsheaders",
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 LOCAL_APPS = [

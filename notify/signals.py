@@ -1,6 +1,9 @@
+from django.core.mail import EmailMultiAlternatives
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, user_logged_out
+from django.template.loader import render_to_string
+
 from .models import Notification
 
 User = get_user_model()
@@ -24,3 +27,12 @@ def password_changed_notification(sender, instance, created, **kwargs):
                 message="Your password was successfully changed.",
                 type="system"
             )
+
+@receiver(user_logged_out)
+def send_logout_email(sender, request, user, **kwargs):
+    if user and user.email:
+        subject = "You have logged out"
+        html_content = render_to_string("emails/logout_notification.html", {"user": user})
+        msg = EmailMultiAlternatives(subject, "", "noreply@geodev.com", [user.email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
