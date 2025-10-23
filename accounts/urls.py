@@ -1,5 +1,5 @@
 from django.urls import path
-from accounts.views import (
+from accounts.auth.user_profile import (
     GetAllUsers,
     ChangePasswordView,
     ProfileView

@@ -2,9 +2,8 @@ from datetime import datetime
 from django.template.loader import render_to_string
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, permissions
-from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from accounts.serializers import UserRegisterSerializer, UserSerializer
+from accounts.serializers import UserRegisterSerializer
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from rest_framework import status
