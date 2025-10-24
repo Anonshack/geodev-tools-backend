@@ -10,3 +10,4 @@ class CountryListView(APIView):
     def get(self, request):
         country_list = [{"code": code, "name": name} for code, name in countries]
         return Response(country_list)
+
