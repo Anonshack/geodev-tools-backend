@@ -4,6 +4,12 @@ from django.contrib.auth import get_user_model
 import logging
 from rest_framework import serializers
 from utils.email_service import send_email_notification
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth import get_user_model
+from django.utils.encoding import force_str, smart_str, smart_bytes, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from rest_framework import serializers
+
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
@@ -75,4 +81,45 @@ class ChangePasswordSerializer(serializers.Serializer):
             context={"user": user},
             recipient_list=[user.email],
         )
+        return user
+
+# reset password serializers
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is not registered.")
+        return value
+
+
+class SetNewPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(min_length=6, max_length=64, write_only=True)
+    confirm_password = serializers.CharField(min_length=6, max_length=64, write_only=True)
+    uidb64 = serializers.CharField()
+    token = serializers.CharField()
+
+    def validate(self, attrs):
+        try:
+            uid = smart_str(urlsafe_base64_decode(attrs['uidb64']))
+            user = User.objects.get(id=uid)
+        except (DjangoUnicodeDecodeError, User.DoesNotExist):
+            raise serializers.ValidationError({"uidb64": "Invalid UID or user not found"})
+
+        if not PasswordResetTokenGenerator().check_token(user, attrs['token']):
+            raise serializers.ValidationError({"token": "Token is invalid or expired"})
+
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match"})
+
+        validate_password(attrs['new_password'], user)
+        attrs['user'] = user
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.validated_data['user']
+        new_password = self.validated_data['new_password']
+        user.set_password(new_password)
+        user._password_changed = True
+        user.save()
         return user
