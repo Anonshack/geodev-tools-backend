@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/v1/auth/', include('accounts.auth.auth_urls')),
     path('api/v1/users/', include('accounts.urls')),
     path('api/v1/notify/', include('notify.urls')),
+    path('api/v1/geo/', include('geo.urls')),
 
    # swagger api
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
