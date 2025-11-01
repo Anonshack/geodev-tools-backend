@@ -1,6 +1,7 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import smart_bytes, smart_str, DjangoUnicodeDecodeError
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,6 +15,10 @@ User = get_user_model()
 
 
 class PasswordResetRequestView(APIView):
+    @swagger_auto_schema(
+        responses={200: PasswordResetRequestSerializer},
+        operation_description="Password reset request part"
+    )
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -23,7 +28,7 @@ class PasswordResetRequestView(APIView):
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
         token = PasswordResetTokenGenerator().make_token(user)
 
-        reset_url = f"http://127.0.0.1:1111/api/v1/auth/password-reset/confirm/{uidb64}/{token}/"
+        reset_url = f"http://127.0.0.1:8000/api/v1/auth/password-reset/confirm/{uidb64}/{token}/"
         email_body = f"Hello {user.username},\nClick the link below to reset your password:\n{reset_url}"
 
         email = EmailMessage(
@@ -81,6 +86,10 @@ class PasswordResetConfirmView(APIView):
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class PasswordResetCompleteView(APIView):
+    @swagger_auto_schema(
+        responses={200: SetNewPasswordSerializer},
+        operation_description="Set new password part"
+    )
     def post(self, request):
         serializer = SetNewPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
