@@ -23,17 +23,3 @@
 # for el in threads:
 #     el.join()
 
-gender = input('Enter your gender -> [F/M]: ')
-name = input('Enter your name: ')
-last_name = input('Enter your last_name: ')
-age = int(input('Enter your age: '))
-phone_number = input('Enter your phone number: ')
-weight = float(input('Enter your weight: '))
-height = float(input('Enter your height: '))
-
-if (gender == 'M' or gender == 'm') and age >= 18 and len(phone_number) >= 8 and weight >= 70.5 and height >= 170.1:
-    print(f"Congratulation, {name.title() + last_name.title()} you have been registered successfully")
-elif (gender == 'F' or gender == 'f') and age >= 19 and len(phone_number) >= 8 and weight >= 60.5 and height >= 160.1:
-    print(f"Congratulation, Mrs {name.title()} {last_name.title()} you have been registered successfully")
-else:
-    print('Sorry!\a')

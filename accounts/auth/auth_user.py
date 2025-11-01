@@ -59,7 +59,7 @@ class LoginAPIView(APIView):
 
         html_content = render_to_string('emails/login_notification.html', context)
         text_content = (
-            f"Salom {user.company_name or user.email}, siz GeoDev saytiga login qildingiz.\n"
+            f"Hi {user.company_name or user.email}, you have been login GeoDev_at company.\n"
             f"Vaqt: {login_time}\nIP: {ip_address}"
         )
 
