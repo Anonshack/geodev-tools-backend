@@ -20,11 +20,16 @@ class NotificationListCreateView(APIView):
         notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    @swagger_auto_schema(
+        operation_description="Post Notification part",
+        responses={
+            200: NotificationSerializer(many=True),
+        }
+    )
     def post(self, request):
         serializer = NotificationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(user=request.user)  # ✅ user = request.user qilib saqlaymiz
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -41,27 +46,37 @@ class NotificationDetailView(APIView):
         notification = get_object_or_404(Notification, pk=pk, user=request.user)
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    @swagger_auto_schema(
+        operation_description="Patch Notification part",
+        responses={
+            200: NotificationSerializer(many=True),
+        }
+    )
     def patch(self, request, pk):
         notification = get_object_or_404(Notification, pk=pk, user=request.user)
         notification.is_read = True
         notification.save(update_fields=['is_read'])
-        return Response({"detail": "Notification marked as read ✅"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Notification marked as read"}, status=status.HTTP_200_OK)
 
 
 class NotificationDeleteAPIView(DestroyAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
-
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):
             return Notification.objects.none()
         return Notification.objects.filter(user=self.request.user)
-
+    @swagger_auto_schema(
+        operation_description="Delete Notification part",
+        responses={
+            200: NotificationSerializer(many=True),
+        }
+    )
     def delete(self, request, *args, **kwargs):
         notification = self.get_object()
         notification.delete()
         return Response(
-            {"detail": "Notification deleted successfully ✅"},
+            {"detail": "Notification deleted successfully"},
             status=status.HTTP_204_NO_CONTENT
         )
+
