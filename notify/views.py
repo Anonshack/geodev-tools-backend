@@ -11,7 +11,7 @@ from .serializers import NotificationSerializer
 class NotificationListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     @swagger_auto_schema(
-        operation_description="Notification list",
+        operation_description="Notification list part",
         responses={
             200: NotificationSerializer(many=True),
         }
@@ -31,7 +31,12 @@ class NotificationListCreateView(APIView):
 
 class NotificationDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-
+    @swagger_auto_schema(
+        operation_description="Notification detail part",
+        responses={
+            200: NotificationSerializer(many=True),
+        }
+    )
     def get(self, request, pk):
         notification = get_object_or_404(Notification, pk=pk, user=request.user)
         serializer = NotificationSerializer(notification)
