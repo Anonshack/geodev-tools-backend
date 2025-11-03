@@ -22,6 +22,7 @@
 #     threads.append(proccess)
 # for el in threads:
 #     el.join()
+
 while True:
     menu = """
         1) Non
@@ -47,6 +48,13 @@ while True:
                 name, price = non[choice]
                 total = count * price
                 print(f"Siz {count} ta {name} oldingiz, umumiy summa: {total} so'm\n")
+                overall = price * total
+                market = input('Yana savdo qilasizmi: [ha/yoq] ')
+                if market == 'ha':
+                    print(x)
+                    print(overall)
+                else:
+                    continue
             else:
                 print("Faqat raqam kiriting!\n")
         else:
