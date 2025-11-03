@@ -22,3 +22,4 @@
 #     threads.append(proccess)
 # for el in threads:
 #     el.join()
+
