@@ -38,16 +38,18 @@ class SaveUserLocationView(APIView):
 
 
 class UserLocationListView(generics.ListAPIView):
-    serializer_class = UserLocationSerializer
-    permission_classes = [IsAdminUser]
-    queryset = UserLocation.objects.all().order_by("-created_at")
-
     @swagger_auto_schema(
         operation_description="For admins and superusers",
         responses={
             200: UserLocationSerializer(many=True),
         }
     )
+
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+    serializer_class = UserLocationSerializer
+    permission_classes = [IsAdminUser]
+    queryset = UserLocation.objects.all().order_by("-created_at")
+
 
