@@ -4,6 +4,8 @@ import certifi
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
+import ast
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,7 +15,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
 
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = ast.literal_eval(os.getenv('ALLOWED_HOSTS', "[]"))
 
 
 DJANGO_APPS = [
