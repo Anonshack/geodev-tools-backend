@@ -15,8 +15,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
 
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ast.literal_eval(os.getenv('ALLOWED_HOSTS', "[]"))
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 DJANGO_APPS = [
     'jazzmin',
