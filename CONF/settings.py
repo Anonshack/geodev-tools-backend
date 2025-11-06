@@ -156,6 +156,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:5500",
     "http://127.0.0.1:1111",
+    "https://geodev-tools-backend.onrender.com",
 ]
-
 CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_ALL_ORIGINS = False  # yoki o‘chirib qo‘ying
+
