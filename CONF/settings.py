@@ -53,9 +53,9 @@ INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -152,12 +152,9 @@ SIMPLE_JWT = {
 ssl._create_default_https_context = ssl._create_unverified_context
 SSL_CERT_FILE = certifi.where()
 
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:5500",
-    "http://127.0.0.1:1111",
     "https://geodev-tools-backend.onrender.com",
 ]
-CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOW_ALL_ORIGINS = False  # yoki o‘chirib qo‘ying
-
