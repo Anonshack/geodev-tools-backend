@@ -20,7 +20,7 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 #
 # if not ALLOWED_HOSTS:
 #     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://geodev-tools-backend.onrender.com']
 
 DJANGO_APPS = [
     'jazzmin',
