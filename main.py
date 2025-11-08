@@ -85,3 +85,59 @@
 #     else:
 #         print("Noto‘g‘ri tanlov, qaytadan urinib ko‘ring.\n")
 
+# x = [1, 2, 3, 4]
+# x_even = []
+# for i in x:
+#     if i % 2 == 0:
+#         x_even.append(i)
+# print(x_even)
+
+# x = [1, 2, 3, 4]
+# x_even = []
+# i = 0
+# while i < len(x):
+#     if x[i] % 2 == 0:
+#         x_even.append(x[i])
+#     i = i + 1
+# print(x_even)
+
+class Person():
+    def __init__(self, full_name, email, age, location):
+        self.full_name = full_name
+        self.email = email
+        self.age = age
+        self.location = location
+
+    def __str__(self):
+        data = f"Name: {self.full_name}, age: {self.age}"
+        return data
+
+    def check_age(self, age):
+        if age >= 19:
+            data = 'Welcome'
+            return data
+        else:
+            data = 'Failed'
+            return data
+
+    def check_email(self, email):
+        if "@gmail.com" in email and "@" in email and ".com" in email:
+            return 'Email acceptable'
+        else:
+            return 'Email not acceptable'
+
+person1 = Person('Qudratbekh', 'anonshack48@gmail.co', 30, 'Tashkent sh')
+print(person1.__dict__)
+
+# x = ['full_name', 'email']
+# for i in x:
+#     person1.__delattr__(i)
+# print(person1.__dict__)
+print(person1.full_name)
+person_age = person1.age
+x1 = person1.check_age(person_age)
+print(x1)
+
+person_email = person1.email
+x2 = person1.check_email(person_email)
+print(x2)
