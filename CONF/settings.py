@@ -42,6 +42,7 @@ LOCAL_APPS = [
     'notify',
     'geo',
     'storage',
+    'ai_tools',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + LOCAL_APPS
