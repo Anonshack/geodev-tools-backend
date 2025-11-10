@@ -35,6 +35,8 @@ PROJECT_APPS = [
     'rest_framework.authtoken',
     "corsheaders",
     'rest_framework_simplejwt.token_blacklist',
+    'import_export',
+
 ]
 
 LOCAL_APPS = [
