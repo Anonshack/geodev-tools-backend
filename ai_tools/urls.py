@@ -7,4 +7,3 @@ urlpatterns = [
     path('api/<str:slug>/',
          DynamicAPIData.as_view()),
 ]
-
