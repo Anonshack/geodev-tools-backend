@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/v1/notify/', include('notify.urls')),
     path('api/v1/geo/', include('geo.urls')),
     path('api/v1/storage/', include('storage.urls')),
-    path('', include('ai_tools.urls')),
+    path('api/v1/geodev-ai/', include('ai_tools.urls')),
 
    # swagger api
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
