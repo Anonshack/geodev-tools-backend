@@ -53,6 +53,17 @@ class UserFilesListView(ListAPIView):
         return StoredFile.objects.filter(owner=self.request.user)
 
 
+class AllFilesListViewForAdmin(ListAPIView):
+    """
+    GET: list authenticated user's files for only admins
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = StoredFileSerializer
+
+    def get_queryset(self):
+        return StoredFile.objects.filter(owner=self.request.user)
+
+
 class PublicFileRetrieveView(RetrieveAPIView):
     """
     GET: retrieve file metadata (and absolute URL) by id
@@ -81,8 +92,3 @@ class FileDownloadView(APIView):
             return response
         except StoredFile.DoesNotExist:
             raise Http404("There are not files")
-
-class GetAllFiles(APIView):
-    permission_classes = [IsAdminUser]
-    serializer_class = StoredFileSerializer
-    queryset = StoredFile.objects.all()
