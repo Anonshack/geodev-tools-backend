@@ -64,18 +64,27 @@ class AllFilesListViewForAdmin(ListAPIView):
         return StoredFile.objects.filter(owner=self.request.user)
 
 
-class PublicFileRetrieveView(RetrieveAPIView):
+class UserPublicFileRetrieveView(RetrieveAPIView):
     """
     GET: retrieve file metadata (and absolute URL) by id
     public access allowed for now; change to IsAuthenticated if needed
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     serializer_class = StoredFileSerializer
     queryset = StoredFile.objects.all()
 
 
+class GetAllFilesForAdminBY_ID(RetrieveAPIView):
+    """
+    GET: retrieve file metadata (and absolute URL) by id
+    for admins
+    """
+    permission_classes = [IsAdminUser]
+    serializer_class = StoredFileSerializer
+    queryset = StoredFile.objects.all()
+
 class FileDownloadView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Download a file by ID",

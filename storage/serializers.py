@@ -8,10 +8,11 @@ class UploadSerializer(serializers.Serializer):
 
 class StoredFileSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField(read_only=True)
+    owner_email = serializers.EmailField(source='owner.email', read_only=True)
 
     class Meta:
         model = StoredFile
-        fields = ('id', 'owner', 'name', 'content_type', 'size', 'created_at', 'url')
+        fields = ('id', 'owner', 'name', 'owner_email' ,'content_type', 'size', 'created_at', 'url')
         read_only_fields = ('id', 'owner', 'name', 'content_type', 'size', 'created_at', 'url')
 
     def get_url(self, obj):

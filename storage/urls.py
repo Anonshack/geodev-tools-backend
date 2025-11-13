@@ -2,21 +2,24 @@ from django.urls import path
 from .views import (
     UploadFileView,
     UserFilesListView,
-    PublicFileRetrieveView,
+    UserPublicFileRetrieveView,
     FileDownloadView,
-    AllFilesListViewForAdmin
+    AllFilesListViewForAdmin,
+    GetAllFilesForAdminBY_ID
 )
 
 urlpatterns = [
-    path('upload/', UploadFileView.as_view(), name='storage-upload'),
-    path('get-all-files/', UserFilesListView.as_view(), name='storage-my-files'),
+    path('upload-for_user/', UploadFileView.as_view(), name='storage-upload'),
+    path('get-all-files-for_user/', UserFilesListView.as_view(), name='storage-my-files'),
     path('me/', UserFilesListView.as_view(), name='storage-my-files'),
     path('files/<int:pk>/download/',
          FileDownloadView.as_view(), name='file-download'),
+    path('user-file-by_file-id/<int:pk>/',
+         UserPublicFileRetrieveView.as_view(), name='user-file-by_file-id'),
 
     # for admins
-    path('user-file-for_admin<int:pk>/',
-         PublicFileRetrieveView.as_view(), name='storage-file-detail'),
     path('all-users-files-for_admin/',
              AllFilesListViewForAdmin.as_view(), name='all-users-files-for_admin'),
+    path('user-file-by_file_id-for-admins/<int:pk>/',
+             GetAllFilesForAdminBY_ID.as_view(), name='user-file-by_file_id-for-admins'),
 ]
