@@ -82,11 +82,12 @@
 #     def has_module_permission(self, request):
 #         return request.user.is_staff
 
-
 from django.contrib import admin
+from django.utils.html import format_html
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from .models import User
+
 
 class UserResource(resources.ModelResource):
     class Meta:
@@ -98,32 +99,54 @@ class UserResource(resources.ModelResource):
             "date_joined", "last_login",
         )
 
+
 @admin.action(description="Activate selected users")
 def make_active(modeladmin, request, queryset):
     queryset.update(is_active=True)
 
+
 @admin.action(description="Deactivate selected users")
 def make_inactive(modeladmin, request, queryset):
     queryset.update(is_active=False)
+
 
 @admin.register(User)
 class CustomUserAdmin(ImportExportModelAdmin):
     resource_class = UserResource
 
     list_display = (
-        "id", "email", "first_name", "last_name", "full_name",
+        "id", "profile_photo", "email",
+        "first_name", "last_name", "full_name",
         "company_name", "phone_number",
         "is_staff", "is_superuser", "is_active", "date_joined",
     )
+
     list_filter = ("is_active", "is_staff", "is_superuser", "company_name")
     search_fields = ("email", "first_name", "last_name", "company_name", "phone_number")
     ordering = ("-date_joined",)
     readonly_fields = ("last_login", "date_joined")
     actions = [make_active, make_inactive]
 
+
+    # ---------- PHOTO SHU YERDA KO‘RINADI ----------
+    def profile_photo(self, obj):
+        """Admin ro‘yhatida user rasmi chiqadi (default rasm bilan)"""
+        if obj.profile_image:
+            return format_html(
+                '<img src="{}" width="45" height="45" style="border-radius:50%; object-fit:cover;" />',
+                obj.profile_image.url
+            )
+        return "No Image"
+
+    profile_photo.short_description = "Photo"
+    # ------------------------------------------------
+
+
     def full_name(self, obj):
         return f"{obj.first_name or ''} {obj.last_name or ''}".strip()
+
     full_name.short_description = "Full name"
+
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
@@ -149,11 +172,13 @@ class CustomUserAdmin(ImportExportModelAdmin):
 
         return super().changelist_view(request, extra_context=extra_context)
 
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
         return qs.filter(is_superuser=False)
+
 
     def has_module_permission(self, request):
         return request.user.is_staff
