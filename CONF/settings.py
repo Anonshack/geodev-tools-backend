@@ -52,6 +52,7 @@ INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -158,3 +159,86 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://geodev-tools-backend.onrender.com",
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "GeoDev Tools Admin",
+    "site_header": "GeoDev Tools",
+    "site_brand": "GeoDev Admin",
+    "site_logo": "img/logo.png",
+
+    "login_logo": None,
+    "login_logo_dark": None,
+
+    "site_logo_classes": "img-circle",
+    "site_icon": None,
+
+    "welcome_sign": "Welcome to GeoDev Tools Admin",
+    "copyright": "GeoDev",
+
+    "search_model": ["accounts.User", "notifications.Notification", "storage.StoredFile"],
+
+    "user_avatar": None,
+
+    "topmenu_links": [
+        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Project GitHub", "url": "https://github.com/", "new_window": True},
+        {"model": "accounts.User"},
+        {"app": "accounts"},
+    ],
+
+    "usermenu_links": [
+        {"name": "GitHub Issues", "url": "https://github.com/", "new_window": True},
+        {"model": "accounts.User"}
+    ],
+
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+
+    "order_with_respect_to": [
+        "accounts",
+        "notifications",
+        "storage",
+        "ai_tools",
+    ],
+
+    "custom_links": {
+        "accounts": [{
+            "name": "Active Users",
+            "url": "admin:accounts_user_changelist",
+            "icon": "fas fa-user-check",
+            "permissions": ["accounts.view_user"]
+        }]
+    },
+
+    "icons": {
+        # Apps
+        "accounts": "fas fa-users",
+        "notifications": "fas fa-bell",
+        "storage": "fas fa-folder",
+        "ai_tools": "fas fa-robot",
+
+        # Models
+        "accounts.User": "fas fa-user",
+        "notifications.Notification": "fas fa-bell",
+        "storage.StoredFile": "fas fa-file",
+    },
+
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+
+    "related_modal_active": True,
+
+    "custom_css": None,
+    "custom_js": None,
+    "use_google_fonts_cdn": True,
+    "show_ui_builder": False,
+
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "accounts.user": "collapsible",
+        "auth.group": "vertical_tabs"
+    },
+    "language_chooser": True,
+}
