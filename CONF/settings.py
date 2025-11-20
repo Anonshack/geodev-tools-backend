@@ -242,3 +242,10 @@ JAZZMIN_SETTINGS = {
     },
     "language_chooser": True,
 }
+
+# admin theme
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+    "navbar": "navbar-dark",
+    "footer": "footer-dark",
+}
