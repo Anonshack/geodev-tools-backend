@@ -160,25 +160,36 @@ CORS_ALLOWED_ORIGINS = [
     "https://geodev-tools-backend.onrender.com",
 ]
 
+# ==========================================
+# GeoDev Tools Jazzmin Admin Settings
+# ==========================================
+
 JAZZMIN_SETTINGS = {
     "site_title": "GeoDev Tools Admin",
     "site_header": "GeoDev Tools",
     "site_brand": "GeoDev Admin",
-    "site_logo": "img/logo.png",
 
-    "login_logo": None,
-    "login_logo_dark": None,
-
+    # Site logo (top-left)
+    "site_logo": "img/logo.png",  # static/img/logo.png bo‘lishi kerak
     "site_logo_classes": "img-circle",
-    "site_icon": None,
+    "site_icon": None,  # favicon
 
+    # Login page logo
+    "login_logo": "img/logo_small.png",      # kichik logoni ishlatish
+    "login_logo_dark": "img/logo_small.png",
+
+    # Welcome message
     "welcome_sign": "Welcome to GeoDev Tools Admin",
     "copyright": "GeoDev",
 
-    "search_model": ["accounts.User", "notifications.Notification", "storage.StoredFile"],
+    # Searchable models in top bar
+    "search_model": ["accounts.User", "notify.Notification", "storage.StoredFile"],
 
-    "user_avatar": None,
+    "user_avatar": None,  # user avatar field (agar bor bo‘lsa)
 
+    # =====================
+    # Top menu
+    # =====================
     "topmenu_links": [
         {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Project GitHub", "url": "https://github.com/", "new_window": True},
@@ -186,16 +197,21 @@ JAZZMIN_SETTINGS = {
         {"app": "accounts"},
     ],
 
+    # =====================
+    # User menu (top-right)
+    # =====================
     "usermenu_links": [
         {"name": "GitHub Issues", "url": "https://github.com/", "new_window": True},
         {"model": "accounts.User"}
     ],
 
+    # =====================
+    # Sidebar
+    # =====================
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],
     "hide_models": [],
-
     "order_with_respect_to": [
         "accounts",
         "notifications",
@@ -203,6 +219,7 @@ JAZZMIN_SETTINGS = {
         "ai_tools",
     ],
 
+    # Custom links in sidebar
     "custom_links": {
         "accounts": [{
             "name": "Active Users",
@@ -212,11 +229,12 @@ JAZZMIN_SETTINGS = {
         }]
     },
 
+    # Icons for apps and models
     "icons": {
         # Apps
         "accounts": "fas fa-users",
-        "notifications": "fas fa-bell",
         "storage": "fas fa-folder",
+        "notifications": "fas fa-bell",
         "ai_tools": "fas fa-robot",
 
         # Models
@@ -228,24 +246,33 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
 
+    # Related modal
     "related_modal_active": True,
 
+    # Custom CSS/JS
     "custom_css": None,
     "custom_js": None,
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,
 
+    # Change form style
     "changeform_format": "horizontal_tabs",
     "changeform_format_overrides": {
         "accounts.user": "collapsible",
         "auth.group": "vertical_tabs"
     },
+
+    # Language selector
     "language_chooser": True,
 }
 
-# admin theme
+# ==========================================
+# Jazzmin UI tweaks (Dark Mode + Logo size)
+# ==========================================
 JAZZMIN_UI_TWEAKS = {
-    "theme": "darkly",
+    "theme": "darkly",           # Dark mode
     "navbar": "navbar-dark",
     "footer": "footer-dark",
+    "logo_width": "120px",       # Admin top-left logo width
+    "logo_height": "120px",      # Admin top-left logo height
 }
