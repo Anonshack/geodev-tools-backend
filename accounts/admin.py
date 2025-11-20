@@ -127,10 +127,7 @@ class CustomUserAdmin(ImportExportModelAdmin):
     readonly_fields = ("last_login", "date_joined")
     actions = [make_active, make_inactive]
 
-
-    # ---------- PHOTO SHU YERDA KO‘RINADI ----------
     def profile_photo(self, obj):
-        """Admin ro‘yhatida user rasmi chiqadi (default rasm bilan)"""
         if obj.profile_image:
             return format_html(
                 '<img src="{}" width="45" height="45" style="border-radius:50%; object-fit:cover;" />',
@@ -139,8 +136,6 @@ class CustomUserAdmin(ImportExportModelAdmin):
         return "No Image"
 
     profile_photo.short_description = "Photo"
-    # ------------------------------------------------
-
 
     def full_name(self, obj):
         return f"{obj.first_name or ''} {obj.last_name or ''}".strip()
