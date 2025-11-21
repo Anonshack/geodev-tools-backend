@@ -20,6 +20,14 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
 
 DJANGO_APPS = [
     'jazzmin',
+    'admin_tools',
+    'admin_tools.theming',
+    'admin_tools.menu',
+    'admin_tools.dashboard',
+
+    'admin_tools_stats',
+    'django_nvd3',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,7 +44,6 @@ PROJECT_APPS = [
     "corsheaders",
     'rest_framework_simplejwt.token_blacklist',
     'import_export',
-
 ]
 
 LOCAL_APPS = [
@@ -46,9 +53,11 @@ LOCAL_APPS = [
     'storage',
     'ai_tools',
 ]
-
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + LOCAL_APPS
 
+# Admin dashboard for active
+ADMIN_TOOLS_INDEX_DASHBOARD = 'core.dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'core.dashboard.CustomAppIndexDashboard'
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -160,9 +169,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://geodev-tools-backend.onrender.com",
 ]
 
-# ==========================================
-# GeoDev Tools Jazzmin Admin Settings
-# ==========================================
 
 JAZZMIN_SETTINGS = {
     "site_title": "GeoDev Tools Admin",
@@ -170,12 +176,12 @@ JAZZMIN_SETTINGS = {
     "site_brand": "GeoDev Admin",
 
     # Site logo (top-left)
-    "site_logo": "img/logo.png",  # static/img/logo.png bo‘lishi kerak
+    "site_logo": "img/logo.png",
     "site_logo_classes": "img-circle",
     "site_icon": None,  # favicon
 
     # Login page logo
-    "login_logo": "img/logo_small.png",      # kichik logoni ishlatish
+    "login_logo": "img/logo_small.png",
     "login_logo_dark": "img/logo_small.png",
 
     # Welcome message
@@ -185,11 +191,8 @@ JAZZMIN_SETTINGS = {
     # Searchable models in top bar
     "search_model": ["accounts.User", "notify.Notification", "storage.StoredFile"],
 
-    "user_avatar": None,  # user avatar field (agar bor bo‘lsa)
+    "user_avatar": None,
 
-    # =====================
-    # Top menu
-    # =====================
     "topmenu_links": [
         {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Project GitHub", "url": "https://github.com/", "new_window": True},
@@ -197,17 +200,11 @@ JAZZMIN_SETTINGS = {
         {"app": "accounts"},
     ],
 
-    # =====================
-    # User menu (top-right)
-    # =====================
     "usermenu_links": [
         {"name": "GitHub Issues", "url": "https://github.com/", "new_window": True},
         {"model": "accounts.User"}
     ],
 
-    # =====================
-    # Sidebar
-    # =====================
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],
@@ -219,7 +216,6 @@ JAZZMIN_SETTINGS = {
         "ai_tools",
     ],
 
-    # Custom links in sidebar
     "custom_links": {
         "accounts": [{
             "name": "Active Users",
@@ -266,9 +262,7 @@ JAZZMIN_SETTINGS = {
     "language_chooser": True,
 }
 
-# ==========================================
-# Jazzmin UI tweaks (Dark Mode + Logo size)
-# ==========================================
+
 JAZZMIN_UI_TWEAKS = {
     "theme": "darkly",           # Dark mode
     "navbar": "navbar-dark",
