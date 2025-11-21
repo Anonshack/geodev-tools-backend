@@ -26,7 +26,6 @@ schema_view = get_schema_view(
 urlpatterns = [
     # admin panels
     path('admin/', admin.site.urls),
-    path('admin_tools/', include('admin_tools.urls')),
 
     # project APIs
     path('api/v1/auth/', include('accounts.auth.auth_urls')),
@@ -35,7 +34,7 @@ urlpatterns = [
     path('api/v1/geo/', include('geo.urls')),
     path('api/v1/storage/', include('storage.urls')),
     path('api/v1/geodev-ai/', include('ai_tools.urls')),
-    path('i18n/', include('django.conf.urls.i18n')), 
+    path('i18n/', include('django.conf.urls.i18n')),
 
     # swagger api
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),

@@ -20,14 +20,6 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
 
 DJANGO_APPS = [
     'jazzmin',
-    'admin_tools',
-    'admin_tools.theming',
-    'admin_tools.menu',
-    'admin_tools.dashboard',
-
-    'admin_tools_stats',
-    'django_nvd3',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,11 +45,8 @@ LOCAL_APPS = [
     'storage',
     'ai_tools',
 ]
-INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + LOCAL_APPS
 
-# Admin dashboard for active
-ADMIN_TOOLS_INDEX_DASHBOARD = 'core.dashboard.CustomIndexDashboard'
-ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'core.dashboard.CustomAppIndexDashboard'
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -270,3 +259,4 @@ JAZZMIN_UI_TWEAKS = {
     "logo_width": "120px",       # Admin top-left logo width
     "logo_height": "120px",      # Admin top-left logo height
 }
+
