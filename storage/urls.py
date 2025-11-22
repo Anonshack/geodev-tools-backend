@@ -10,7 +10,6 @@ from .views import (
 
 urlpatterns = [
     path('upload-for_user/', UploadFileView.as_view(), name='storage-upload'),
-    path('get-all-files-for_user/', UserFilesListView.as_view(), name='storage-my-files'),
     path('me/', UserFilesListView.as_view(), name='storage-my-files'),
     path('files/<int:pk>/download/',
          FileDownloadView.as_view(), name='file-download'),
