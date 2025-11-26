@@ -143,11 +143,11 @@
 # x2 = person1.check_email(person_email)
 # print(x2)
 
-l1 = ['cat', 'dog']
-l2 = []
-for i in l1:
-    l2.append(i[::-1])
-print(l2)
-
-print(l1[0])
-print(l1[1])
+# l1 = ['cat', 'dog']
+# l2 = []
+# for i in l1:
+#     l2.append(i[::-1])
+# print(l2)
+#
+# print(l1[0])
+# print(l1[1])
