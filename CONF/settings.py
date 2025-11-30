@@ -4,13 +4,11 @@ import certifi
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
-import ast
 
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
 
@@ -159,7 +157,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://geodev-tools-backend.onrender.com",
 ]
 
-
+# jazzmin settings part
 JAZZMIN_SETTINGS = {
     "site_title": "GeoDev Tools Admin",
     "site_header": "GeoDev Tools",
@@ -168,7 +166,7 @@ JAZZMIN_SETTINGS = {
     # Site logo (top-left)
     "site_logo": "img/logo.png",
     "site_logo_classes": "img-circle",
-    "site_icon": None,  # favicon
+    "site_icon": None,
 
     # Login page logo
     "login_logo": "img/logo_small.png",
@@ -261,3 +259,4 @@ JAZZMIN_UI_TWEAKS = {
     "logo_height": "120px",      # Admin top-left logo height
 }
 
+# Anons / Qudratbekh

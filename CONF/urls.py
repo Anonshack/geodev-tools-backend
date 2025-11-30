@@ -13,7 +13,7 @@ schema_view = get_schema_view(
    openapi.Info(
       title="API",
       default_version='v1',
-      description="Qudratbekh",
+      description="Qudratbekh / Anons",
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="anonshack48@gmail.com"),
       license=openapi.License(name="BSD License"),
