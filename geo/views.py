@@ -37,6 +37,7 @@ class SaveUserLocationView(APIView):
         return Response({"message": message})
 
 
+# for admins
 class UserLocationListView(generics.ListAPIView):
     @swagger_auto_schema(
         operation_description="For admins and superusers",
