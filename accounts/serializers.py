@@ -1,13 +1,11 @@
 from django.contrib.auth.password_validation import validate_password
 from django_countries.serializer_fields import CountryField as CountrySerializerField
-from django.contrib.auth import get_user_model
 import logging
-from rest_framework import serializers
 from utils.email_service import send_email_notification
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_str, smart_str, smart_bytes, DjangoUnicodeDecodeError
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
 User = get_user_model()
