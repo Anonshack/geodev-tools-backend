@@ -151,3 +151,75 @@
 #
 # print(l1[0])
 # print(l1[1])
+
+# x = input('Text: ')
+# res = ""
+#
+# for el in x:
+#     if 'a' <= el <= 'z':
+#         res += 'a' if el == 'z' else chr(ord(el) + 1)
+#     elif 'A' <= el <= 'Z':
+#         res += 'A' if el == 'Z' else chr(ord(el) + 1)
+#     else:
+#         res += el
+#
+# print(res)
+
+
+
+# 0 1 2 3 4 5 6 7 8
+# P r o g r a m m a
+# juft  → P o r m a
+# toq  → r g a m m
+# s = input("text: ")
+# juft = ""
+# toq = ""
+# for i in range(len(s)):
+#     if i % 2 == 0:
+#         juft += s[i]
+#     else:
+#         toq += s[i]
+# res = juft + toq[::-1]
+# print("res:", res)
+
+# x = input("Butun son kiriting: ")
+# l = []
+# while True:
+#     for i in x:
+#         l.append(i)
+#     l.reverse()
+#     print("".join(l))
+#     break
+
+# f = open('story.txt', 'r')
+# word = f.read().lower()
+# f.close()
+#
+# words = word.split() # salom salom salom
+#
+# res = {}
+# for el in words:
+#     if el in res:
+#         res[el] += 1
+#     else:
+#         res[el] = 1
+#
+# kop_soz = max(res)
+#
+# print(f"Eng kop soz: '{kop_soz}'")
+# print(f"Jami {res[kop_soz]} marta")
+
+
+import time
+print("nums (100 -> 100 000 000)")
+s_time = time.time()
+for el in range(100, 100000001):
+    s_son = str(el)
+    n = len(s_son)
+
+    res = sum(int(num) ** n for num in s_son)
+    if res == el:
+        print(f"num: {el}")
+
+end_time = time.time()
+print(f"The time took: {int(end_time - s_time)} sek")
