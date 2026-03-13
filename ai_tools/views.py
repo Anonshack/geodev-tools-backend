@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 import openai
 
+# with ai
 openai.api_key = "YOUR_OPENAI_API_KEY"
 
 dynamic_apis = {}
