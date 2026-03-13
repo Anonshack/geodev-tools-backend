@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from CONF import settings
 from .models import Notification
 
+# signals
 User = get_user_model()
 
 @receiver(post_save, sender=User)

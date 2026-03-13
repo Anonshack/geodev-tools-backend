@@ -10,7 +10,7 @@ from drf_yasg import openapi
 from .models import StoredFile
 from .serializers import UploadSerializer, StoredFileSerializer
 
-
+# main views
 class UploadFileView(APIView):
     """
     POST: upload a file (authenticated)

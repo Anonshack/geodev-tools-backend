@@ -4,9 +4,7 @@ from import_export.admin import ImportExportModelAdmin
 from .models import UserLocation
 from django.utils.html import format_html
 
-# ----------------------------
 # Resource for UserLocation
-# ----------------------------
 class UserLocationResource(resources.ModelResource):
     class Meta:
         model = UserLocation

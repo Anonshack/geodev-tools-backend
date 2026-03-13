@@ -259,4 +259,4 @@ JAZZMIN_UI_TWEAKS = {
     "logo_height": "120px",      # Admin top-left logo height
 }
 
-# Anons / Qudratbekh
+# Anons / Kudratbekh

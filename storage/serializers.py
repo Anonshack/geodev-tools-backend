@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import StoredFile
 
-
+# models of storage
 class UploadSerializer(serializers.Serializer):
     file = serializers.FileField()
 

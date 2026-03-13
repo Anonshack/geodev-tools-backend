@@ -8,6 +8,7 @@ from .views import (
     GetAllFilesForAdminBY_ID
 )
 
+# storage urls
 urlpatterns = [
     path('upload-for_user/', UploadFileView.as_view(), name='storage-upload'),
     path('me/', UserFilesListView.as_view(), name='storage-my-files'),

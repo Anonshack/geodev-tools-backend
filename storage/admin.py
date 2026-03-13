@@ -5,9 +5,7 @@ from django.utils.html import format_html
 from django.db.models import Sum
 from .models import StoredFile
 
-# ----------------------------
 # Resource for import-export
-# ----------------------------
 class StoredFileResource(resources.ModelResource):
     class Meta:
         model = StoredFile

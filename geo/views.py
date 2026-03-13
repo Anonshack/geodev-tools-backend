@@ -33,14 +33,14 @@ class SaveUserLocationView(APIView):
                 "longitude": geo.get("longitude"),
             }
         )
-        message = "New location created ✅" if created else "Location updated 🔄"
+        message = "new location created ✅" if created else "location updated 🔄"
         return Response({"message": message})
 
 
 # for admins
 class UserLocationListView(generics.ListAPIView):
     @swagger_auto_schema(
-        operation_description="For admins and superusers",
+        operation_description="for admins and superusers",
         responses={
             200: UserLocationSerializer(many=True),
         }
