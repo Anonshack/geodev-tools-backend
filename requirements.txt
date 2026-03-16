@@ -104,3 +104,4 @@ uritemplate==4.2.0
 urllib3==2.5.0
 utils==1.0.2
 yarl==1.22.0
+gunicorn

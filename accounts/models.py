@@ -28,10 +28,20 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
         return self.create_user(email=email, username=username, password=password, **extra_fields)
 
-
+COUNTRIES = [
+    ('UZ', 'Uzbekistan'),
+    ('KZ', 'Kazakhstan'),
+    ('TR', 'Turkey'),
+    ('US', 'United States'),
+]
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    country = CountryField(blank_label='Select country')
+    country = models.CharField(
+        max_length=50,
+        choices=COUNTRIES,
+        blank=True,
+        null=True
+    )
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     username = models.CharField(max_length=150, unique=True)
