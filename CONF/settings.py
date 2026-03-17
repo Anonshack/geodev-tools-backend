@@ -1,8 +1,9 @@
 import os
 import ssl
-import certifi
 from datetime import timedelta
 from pathlib import Path
+
+import certifi
 from dotenv import load_dotenv
 
 
