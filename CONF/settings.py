@@ -10,13 +10,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
-
-DEBUG = os.getenv("DEBUG", "True") == "True"
-
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
 # ALLOWED_HOSTS = ["geodev-tools-backend.onrender.com"]
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(',')
+SECRET_KEY = os.getenv("SECRET_KEY", "default-secret-key")
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 DJANGO_APPS = [
     'jazzmin',
