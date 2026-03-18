@@ -1,20 +1,17 @@
 import os
 import ssl
 from datetime import timedelta
+from decouple import config, Csv
 from pathlib import Path
-
 import certifi
 from dotenv import load_dotenv
-
-
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-# ALLOWED_HOSTS = ["geodev-tools-backend.onrender.com"]
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(',')
-SECRET_KEY = os.getenv("SECRET_KEY", "default-secret-key")
-DEBUG = os.getenv("DEBUG", "True") == "True"
+DEBUG = config('DEBUG', default=True, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+SECRET_KEY = config('SECRET_KEY')
 
 DJANGO_APPS = [
     'jazzmin',
@@ -60,7 +57,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 ROOT_URLCONF = 'CONF.urls'
 WSGI_APPLICATION = 'CONF.wsgi.application'
 
@@ -79,29 +75,22 @@ TEMPLATES = [
     },
 ]
 
-if os.getenv("DB_NAME"):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv("DB_NAME"),
-            'USER': os.getenv("DB_USER"),
-            'PASSWORD': os.getenv("DB_PASSWORD"),
-            'HOST': os.getenv("DB_HOST", "127.0.0.1"),
-            'PORT': os.getenv("DB_PORT", "5432"),
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='127.0.0.1'),
+        'PORT': config('DB_PORT', default='5432'),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 print("DB:", os.getenv("DB_NAME"))
 print("DB:", os.getenv("DB_USER"))
 # print("DB:", os.getenv("DB_PASSWORD"))
 print("DB:", os.getenv("DB_HOST"))
 print("DB:", os.getenv("DB_PORT"))
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -141,7 +130,6 @@ EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -198,99 +186,6 @@ JAZZMIN_SETTINGS = {
     # Custom CSS
     "custom_css": "css/admin_custom.css",
 }
-# jazzmin settings part
-# JAZZMIN_SETTINGS = {
-#     "site_title": "GeoDev Tools Admin",
-#     "site_header": "GeoDev Tools",
-#     "site_brand": "GeoDev Admin",
-#
-#     # Site logo (top-left)
-#     "site_logo": "img/logo.png",
-#     "site_logo_classes": "img-circle",
-#     "site_icon": None,
-#
-#     # Login page logo
-#     "login_logo": "img/logo.png",
-#     "login_logo_dark": "img/logo.png",
-#
-#     # Welcome message
-#     "welcome_sign": "Welcome to GeoDev Tools Admin",
-#     "copyright": "GeoDev",
-#
-#     # Searchable models in top bar
-#     "search_model": ["accounts.User", "notify.Notification", "storage.StoredFile"],
-#
-#     "user_avatar": None,
-#
-#     "topmenu_links": [
-#         {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
-#         {"name": "Project GitHub", "url": "https://github.com/", "new_window": True},
-#         {"model": "accounts.User"},
-#         {"app": "accounts"},
-#     ],
-#
-#     "usermenu_links": [
-#         {"name": "GitHub Issues", "url": "https://github.com/", "new_window": True},
-#         {"model": "accounts.User"}
-#     ],
-#
-#     "show_sidebar": True,
-#     "navigation_expanded": True,
-#     "hide_apps": [],
-#     "hide_models": [],
-#     "order_with_respect_to": [
-#         "accounts",
-#         "notifications",
-#         "storage",
-#         "ai_tools",
-#     ],
-#
-#     "custom_links": {
-#         "accounts": [{
-#             "name": "Active Users",
-#             "url": "admin:accounts_user_changelist",
-#             "icon": "fas fa-user-check",
-#             "permissions": ["accounts.view_user"]
-#         }]
-#     },
-#
-#     # Icons for apps and models
-#     "icons": {
-#         # Apps
-#         "accounts": "fas fa-users",
-#         "storage": "fas fa-folder",
-#         "notifications": "fas fa-bell",
-#         "ai_tools": "fas fa-robot",
-#
-#         # Models
-#         "accounts.User": "fas fa-user",
-#         "notifications.Notification": "fas fa-bell",
-#         "storage.StoredFile": "fas fa-file",
-#     },
-#
-#     "default_icon_parents": "fas fa-chevron-circle-right",
-#     "default_icon_children": "fas fa-circle",
-#
-#     # Related modal
-#     "related_modal_active": True,
-#
-#     # Custom CSS/JS
-#     "custom_css": None,
-#     "custom_js": None,
-#     "use_google_fonts_cdn": True,
-#     "show_ui_builder": False,
-#
-#     # Change form style
-#     "changeform_format": "horizontal_tabs",
-#     "changeform_format_overrides": {
-#         "accounts.user": "collapsible",
-#         "auth.group": "vertical_tabs"
-#     },
-#
-#     # Language selector
-#     "language_chooser": True,
-# }
-
 
 JAZZMIN_UI_TWEAKS = {
     "theme": "darkly",           # Dark mode
