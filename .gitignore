@@ -1,9 +1,27 @@
-.anons
-.venv
-venv
-idea
-.idea
+# Virtual environments
+venv/
+env/
+.venv/
+.anons/
+
+# IDE
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+db.sqlite3
+
+# Env files
 .env
-env
-media
-/media
+
+# Static & media
+staticfiles/
+media/
+
+# OS files
+.DS_Store
