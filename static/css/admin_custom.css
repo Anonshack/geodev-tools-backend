@@ -1,4 +1,68 @@
+/* Login sahifa logo */
 .login-logo img {
     width: 150px;
     height: auto;
+}
+
+/* Skip linklarni yashirish */
+.skip-link,
+a[href="#content"],
+a[href="#nav-sidebar"] {
+    display: none !important;
+}
+
+/* Sidebar va header fon rangini o'zgartirish */
+#header, .sidebar-wrapper {
+    background-color: #1E1E2F;  /* o'zing xohlagan rang */
+}
+
+/* Admin topbar link hover effekti */
+.navbar-nav .nav-item a:hover {
+    color: #ff9800;  /* sariq rang hoverda */
+}
+
+/* Jadval header rangini o'zgartirish */
+.table thead th {
+    background-color: #4CAF50;  /* yashil header */
+    color: white;
+}
+
+/* Buttons stilini o'zgartirish */
+button, input[type="submit"] {
+    background-color: #2196F3 !important;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Form input border va radius */
+input, select, textarea {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Checkbox / tortburchaklar */
+input[type="checkbox"] {
+    display: inline-block !important; /* checkbox ko‘rinishi */
+    width: 16px;
+    height: 16px;
+    border: 1px solid #ccc; /* tortburchak border */
+    border-radius: 3px; /* ozgina radius */
+    background-color: white;
+    vertical-align: middle; /* matn bilan tekis */
+}
+
+input[type="checkbox"]:checked {
+    background-color: #2196F3; /* checked bo‘lsa rang */
+    border-color: #2196F3;
+}
+
+/* User avatar / frame */
+.user-avatar img {
+    border: 2px solid #2196F3; /* frame rangi */
+    border-radius: 4px;         /* ozgina radius */
+    width: 40px;                /* kerakli o‘lcham */
+    height: 40px;
+    object-fit: cover;          /* rasm to‘g‘ri chiqishi uchun */
 }

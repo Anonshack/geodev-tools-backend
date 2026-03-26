@@ -21,7 +21,7 @@ DJANGO_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.staticfiles",
 ]
 
 PROJECT_APPS = [
@@ -105,7 +105,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -153,47 +152,29 @@ JAZZMIN_SETTINGS = {
     "site_header": "GeoDev Tools",
     "site_brand": "GeoDev Admin",
 
-    # Top-left logo
     "site_logo": "img/logo.png",
     "site_logo_classes": "img-circle",
-    "site_icon": None,
 
-    # Login page logo
     "login_logo": "img/logo.png",
-    "login_logo_dark": "img/logo.png",
 
-    # Welcome message
     "welcome_sign": "Welcome to GeoDev Tools Admin",
-    "copyright": "GeoDev",
 
     "search_model": ["accounts.User", "notify.Notification", "storage.StoredFile"],
-    "user_avatar": None,
 
     "topmenu_links": [
-        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Project GitHub", "url": "https://github.com/", "new_window": True},
-        {"model": "accounts.User"},
-        {"app": "accounts"},
-    ],
-
-    "usermenu_links": [
-        {"name": "GitHub Issues", "url": "https://github.com/", "new_window": True},
-        {"model": "accounts.User"}
+        {"name": "Dashboard", "url": "admin:index"},
     ],
 
     "show_sidebar": True,
     "navigation_expanded": True,
 
-    # Custom CSS
     "custom_css": "css/admin_custom.css",
 }
 
-JAZZMIN_UI_TWEAKS = {
-    "theme": "darkly",           # Dark mode
-    "navbar": "navbar-dark",
-    "footer": "footer-dark",
-    "logo_width": "120px",       # Admin top-left logo width
-    "logo_height": "120px",      # Admin top-left logo height
-}
 
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+    "navbar": "navbar-light",
+    "footer": "footer-light",
+}
 # Anons / Kudratbekh
