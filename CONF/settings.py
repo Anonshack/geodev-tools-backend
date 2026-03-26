@@ -85,11 +85,11 @@ DATABASES = {
         'PORT': config('DB_PORT', default='5432'),
     }
 }
-print("DB:", os.getenv("DB_NAME"))
-print("DB:", os.getenv("DB_USER"))
+print("DB:", config("DB_NAME"))
+print("DB:", config("DB_USER"))
 # print("DB:", os.getenv("DB_PASSWORD"))
-print("DB:", os.getenv("DB_HOST"))
-print("DB:", os.getenv("DB_PORT"))
+print("DB:", config("DB_HOST"))
+print("DB:", config("DB_PORT"))
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -98,8 +98,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en-us")
-TIME_ZONE = os.getenv("TIME_ZONE", "Asia/Tashkent")
+LANGUAGE_CODE = config("LANGUAGE_CODE", "en-us")
+TIME_ZONE = config("TIME_ZONE", "Asia/Tashkent")
 USE_I18N = True
 USE_TZ = True
 
@@ -123,13 +123,13 @@ REST_FRAMEWORK = {
     ),
 }
 
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+EMAIL_BACKEND = config("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = config("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(config("EMAIL_PORT", 587))
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", "True") == "True"
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -147,6 +147,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://geodev-tools-backend.onrender.com",
 ]
+
 JAZZMIN_SETTINGS = {
     "site_title": "GeoDev Tools Admin",
     "site_header": "GeoDev Tools",
