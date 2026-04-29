@@ -60,3 +60,11 @@ class MockAPIDetailSerializer(MockAPISerializer):
     class Meta(MockAPISerializer.Meta):
         fields = MockAPISerializer.Meta.fields + ("data",)
         read_only_fields = fields
+
+
+class MockAPIAdminSerializer(MockAPISerializer):
+    owner = serializers.CharField(source='owner.username', read_only=True)
+    owner_id = serializers.IntegerField(source='owner.id', read_only=True)
+
+    class Meta(MockAPISerializer.Meta):
+        fields = MockAPISerializer.Meta.fields + ("owner", "owner_id")

@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import Notification
-from .serializers import NotificationSerializer
+from .serializers import NotificationSerializer, NotificationAdminSerializer
 
 
 class NotificationPagination(PageNumberPagination):
@@ -115,15 +115,56 @@ class NotificationMarkAllReadView(APIView):
 class NotificationUnreadCountView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(
-        operation_summary="Get unread notification count",
-        responses={
-            200: openapi.Response(
-                description="Unread count",
-                examples={"application/json": {"unread_count": 5}},
-            )
-        },
-    )
     def get(self, request):
         count = Notification.objects.filter(user=request.user, is_read=False).count()
         return Response({"unread_count": count}, status=status.HTTP_200_OK)
+
+
+# ── Admin views ───────────────────────────────────────────────────────────────
+
+class AdminNotificationListView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        qs = Notification.objects.select_related("user").order_by("-created_at")
+        paginator = NotificationPagination()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = NotificationAdminSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+
+class AdminNotificationDeleteView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def delete(self, request, pk):
+        notification = get_object_or_404(Notification, pk=pk)
+        notification.delete()
+        return Response({"detail": "Deleted."}, status=status.HTTP_204_NO_CONTENT)
+
+
+class AdminSendNotificationView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        user_id = request.data.get("user_id")
+        title = request.data.get("title", "").strip()
+        message = request.data.get("message", "")
+        notif_type = request.data.get("type", "system")
+
+        if not title:
+            return Response({"detail": "title is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not user_id:
+            return Response({"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        notification = Notification.objects.create(
+            user=user, title=title, message=message, type=notif_type,
+        )
+        return Response(NotificationAdminSerializer(notification).data, status=status.HTTP_201_CREATED)

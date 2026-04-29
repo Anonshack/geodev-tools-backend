@@ -5,13 +5,13 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
 from .models import MockAPI
-from .serializers import MockAPICreateSerializer, MockAPISerializer, MockAPIDetailSerializer
+from .serializers import MockAPICreateSerializer, MockAPISerializer, MockAPIDetailSerializer, MockAPIAdminSerializer
 from .ai_generator import generate_mock_data
 
 
@@ -214,3 +214,42 @@ class RegenerateMockAPIView(APIView):
         obj.save(update_fields=["data", "item_count"])
 
         return Response(MockAPIDetailSerializer(obj, context={"request": request}).data)
+
+
+# ── Admin views ───────────────────────────────────────────────────────────────
+
+class AdminMockAPIListView(ListAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class = MockAPIAdminSerializer
+    pagination_class = MockAPIPagination
+    queryset = MockAPI.objects.select_related("owner").order_by("-created_at")
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx["request"] = self.request
+        return ctx
+
+
+class AdminMockAPIDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def _get(self, pk):
+        try:
+            return MockAPI.objects.select_related("owner").get(pk=pk)
+        except MockAPI.DoesNotExist:
+            return None
+
+    def patch(self, request, pk):
+        obj = self._get(pk)
+        if not obj:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        obj.is_active = not obj.is_active
+        obj.save(update_fields=["is_active"])
+        return Response(MockAPIAdminSerializer(obj, context={"request": request}).data)
+
+    def delete(self, request, pk):
+        obj = self._get(pk)
+        if not obj:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

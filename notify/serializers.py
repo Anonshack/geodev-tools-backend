@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Notification
 
-# notify ser
+
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
@@ -13,3 +13,13 @@ class NotificationSerializer(serializers.ModelSerializer):
         if request is None or request.user is None or request.user.is_anonymous:
             raise serializers.ValidationError("Authentication required.")
         return Notification.objects.create(user=request.user, **validated_data)
+
+
+class NotificationAdminSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = ('id', 'user_id', 'username', 'title', 'message', 'type', 'is_read', 'created_at')
+        read_only_fields = fields

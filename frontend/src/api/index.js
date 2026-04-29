@@ -41,6 +41,40 @@ export const filesApi = {
   downloadUrl: (pk)       => `/api/v1/storage/files/${pk}/download/`,
 }
 
+// ── Geo / Location ────────────────────────────────────────────────────────────
+export const geoApi = {
+  saveLocation:  ()         => api.get('/api/v1/geo/save-location/'),
+  myLocations:   (page = 1) => api.get(`/api/v1/geo/my-locations/?page=${page}`),
+}
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
+export const adminApi = {
+  stats:              ()           => api.get('/api/v1/users/admin-stats/'),
+
+  // Users
+  users:              (page = 1)   => api.get(`/api/v1/users/all-users/?page=${page}`),
+  userDetail:         (pk)         => api.get(`/api/v1/users/admin-users/${pk}/`),
+  userUpdate:         (pk, data)   => api.patch(`/api/v1/users/admin-users/${pk}/`, data),
+  userDelete:         (pk)         => api.delete(`/api/v1/users/admin-users/${pk}/`),
+
+  // Files
+  files:              (page = 1)   => api.get(`/api/v1/storage/admin/files/?page=${page}`),
+  fileDelete:         (pk)         => api.delete(`/api/v1/storage/admin/files/${pk}/delete/`),
+
+  // Mock APIs
+  mockApis:           (page = 1)   => api.get(`/api/v1/geodev-ai/admin/?page=${page}`),
+  mockApiToggle:      (pk)         => api.patch(`/api/v1/geodev-ai/admin/${pk}/`),
+  mockApiDelete:      (pk)         => api.delete(`/api/v1/geodev-ai/admin/${pk}/`),
+
+  // Locations
+  locations:          (page = 1)   => api.get(`/api/v1/geo/admin-users-locations/?page=${page}`),
+
+  // Notifications
+  notifications:      (page = 1)   => api.get(`/api/v1/notify/admin/?page=${page}`),
+  notificationDelete: (pk)         => api.delete(`/api/v1/notify/admin/${pk}/delete/`),
+  notificationSend:   (data)       => api.post('/api/v1/notify/admin/send/', data),
+}
+
 // ── AI / Mock API ─────────────────────────────────────────────────────────────
 export const aiApi = {
   generate:   (data)       => api.post('/api/v1/geodev-ai/generate/', data),

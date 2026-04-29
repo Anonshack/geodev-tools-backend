@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { LayoutDashboard, FolderOpen, Bell, User, Cpu, LogOut, Menu, MapPin } from 'lucide-react'
+import { LayoutDashboard, FolderOpen, Bell, User, Cpu, LogOut, Menu, MapPin, Shield } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const NAV = [
@@ -62,6 +62,15 @@ function SidebarContent({ onClose }) {
             <p className="text-xs text-gray-400 truncate">{user?.email}</p>
           </div>
         </div>
+        {user?.is_staff && (
+          <NavLink
+            to="/admin"
+            className="sidebar-link text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
+          >
+            <Shield size={17} />
+            <span>Admin Panel</span>
+          </NavLink>
+        )}
         <button
           onClick={handleLogout}
           className="sidebar-link w-full text-red-500 hover:bg-red-50 hover:text-red-600"

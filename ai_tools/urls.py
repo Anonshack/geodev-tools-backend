@@ -5,17 +5,18 @@ from .views import (
     UserMockAPIListView,
     UserMockAPIDetailView,
     RegenerateMockAPIView,
+    AdminMockAPIListView,
+    AdminMockAPIDetailView,
 )
 
 urlpatterns = [
-    # Create a new mock API
     path("generate/", GenerateMockAPIView.as_view(), name="mock-api-generate"),
-
-    # Public data endpoint — no auth needed
     path("mock/<str:slug>/", MockAPIPublicView.as_view(), name="mock-api-public"),
-
-    # User's own mock APIs
     path("my-apis/", UserMockAPIListView.as_view(), name="mock-api-list"),
     path("my-apis/<int:pk>/", UserMockAPIDetailView.as_view(), name="mock-api-detail"),
     path("my-apis/<int:pk>/regenerate/", RegenerateMockAPIView.as_view(), name="mock-api-regenerate"),
+
+    # Admin
+    path("admin/", AdminMockAPIListView.as_view(), name="admin-mock-api-list"),
+    path("admin/<int:pk>/", AdminMockAPIDetailView.as_view(), name="admin-mock-api-detail"),
 ]

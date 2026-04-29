@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { authApi, profileApi } from '../api'
+import { authApi, profileApi, geoApi } from '../api'
 
 const AuthContext = createContext(null)
 
@@ -27,6 +27,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('access', data.access)
     localStorage.setItem('refresh', data.refresh)
     await fetchProfile()
+    geoApi.saveLocation().catch(() => {})
     return data
   }
 

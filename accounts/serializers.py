@@ -68,6 +68,20 @@ class UserListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class UserAdminSerializer(serializers.ModelSerializer):
+    """Admin serializer — can toggle is_active / is_staff."""
+    country = CountrySerializerField(name_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name', 'company_name',
+            'profile_image', 'bio', 'phone_number', 'address', 'country', 'city',
+            'is_active', 'is_staff', 'date_joined', 'last_login',
+        )
+        read_only_fields = ('id', 'email', 'username', 'date_joined', 'last_login')
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
