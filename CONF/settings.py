@@ -84,12 +84,6 @@ DATABASES = {
         'PORT': config('DB_PORT', cast=int),
     }
 }
-print("DB:", config("DB_NAME"))
-print("DB:", config("DB_USER"))
-# print("DB:", os.getenv("DB_PASSWORD"))
-print("DB:", config("DB_HOST"))
-print("DB:", config("DB_PORT"))
-
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -147,6 +141,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:5501",
     "https://geodev-tools-backend.onrender.com",
 ]
 

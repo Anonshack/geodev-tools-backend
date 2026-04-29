@@ -41,16 +41,31 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Full profile serializer — used only for the authenticated user's own profile."""
     country = CountrySerializerField(name_only=True)
+
     class Meta:
         model = User
         fields = (
-            'id', 'email', 'first_name', 'last_name', 'company_name', 'api_key',
+            'id', 'username', 'email', 'first_name', 'last_name', 'company_name', 'api_key',
             'is_active', 'is_staff', 'is_superuser',
             'date_joined', 'last_login', 'profile_image', 'bio',
             'phone_number', 'address', 'country', 'city'
         )
-        read_only_fields = ("id", "email")
+        read_only_fields = ("id", "email", "api_key", "is_staff", "is_superuser", "date_joined", "last_login")
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    """Safe public serializer — no api_key or sensitive flags."""
+    country = CountrySerializerField(name_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'company_name', 'profile_image', 'country', 'city', 'is_active', 'date_joined'
+        )
+        read_only_fields = fields
 
 
 class ChangePasswordSerializer(serializers.Serializer):

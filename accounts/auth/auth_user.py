@@ -1,14 +1,11 @@
-from datetime import datetime
-from django.template.loader import render_to_string
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import generics, permissions, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from accounts.serializers import UserRegisterSerializer
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 import logging
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -19,14 +16,13 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-# Register View
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
     @swagger_auto_schema(
-        responses={200: UserRegisterSerializer},
+        responses={201: UserRegisterSerializer},
         operation_description="Register part"
     )
     def post(self, request, *args, **kwargs):
@@ -55,8 +51,9 @@ def generate_api_key(request):
     return Response({'api_key': key}, status=status.HTTP_200_OK)
 
 
-# Login API
 class LoginAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
     @swagger_auto_schema(
         operation_description="Login part",
         request_body=openapi.Schema(
@@ -81,7 +78,7 @@ class LoginAPIView(APIView):
                     }
                 }
             ),
-            401: openapi.Response(description="Invalid credentials"),
+            401: openapi.Response(description="Invalid credentials or account inactive"),
             404: openapi.Response(description="User not found"),
         }
     )
@@ -94,54 +91,39 @@ class LoginAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        if not user.is_active:
+            return Response({"detail": "Account is disabled."}, status=status.HTTP_401_UNAUTHORIZED)
+
         if not user.check_password(password):
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
         refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
-        login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ip_address = self.get_client_ip(request)
+        login_time = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+        ip_address = self._get_client_ip(request)
 
-        context = {
-            'user': user,
-            'login_time': login_time,
-            'ip_address': ip_address,
-        }
-
-        html_content = render_to_string('emails/login_notification.html', context)
-        text_content = (
-            f"Hi {user.company_name or user.email}, you have logged in to GeoDev_at company.\n"
-            f"Time: {login_time}\nIP: {ip_address}"
-        )
-
-        email_message = EmailMultiAlternatives(
+        send_email_notification(
             subject='Login Notification',
-            body=text_content,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[user.email],
+            template_name='emails/login_notification.html',
+            context={'user': user, 'login_time': login_time, 'ip_address': ip_address},
+            recipient_list=[user.email],
         )
-        email_message.attach_alternative(html_content, "text/html")
-        email_message.send()
 
         return Response({
             "refresh": str(refresh),
-            "access": access_token,
+            "access": str(refresh.access_token),
             "email": user.email,
             "company_name": user.company_name,
             "login_time": login_time,
             "ip_address": ip_address,
         }, status=status.HTTP_200_OK)
 
-    def get_client_ip(self, request):
+    def _get_client_ip(self, request):
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        return ip
+            return x_forwarded_for.split(',')[0].strip()
+        return request.META.get('REMOTE_ADDR')
 
 
-# Logout API
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -160,15 +142,11 @@ class LogoutView(APIView):
         responses={
             200: openapi.Response(
                 description="Logout successful",
-                examples={
-                    "application/json": {"detail": "Logout successful!"}
-                }
+                examples={"application/json": {"detail": "Logout successful!"}}
             ),
             400: openapi.Response(
                 description="Invalid or expired token",
-                examples={
-                    "application/json": {"error": "Token is invalid or expired"}
-                }
+                examples={"application/json": {"error": "Token is invalid or expired"}}
             ),
         }
     )
@@ -192,9 +170,8 @@ class LogoutView(APIView):
                 context={"user": user},
                 recipient_list=[user.email],
             )
-
             return Response({"detail": "Logout successful!"}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            logger.error(f"Logout error: {e}")
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            logger.error("Logout error: %s", e)
+            return Response({"error": "Token is invalid or expired"}, status=status.HTTP_400_BAD_REQUEST)

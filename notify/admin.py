@@ -53,17 +53,16 @@ class NotificationAdmin(ImportExportModelAdmin):
 
 
     def notification_stats(self, obj):
-        stats = {
-            "total_notifications": Notification.objects.count(),
-            "unread_notifications": Notification.objects.filter(is_read=False).count(),
-            "total_users_with_notifications": Notification.objects.values('user').distinct().count(),
-        }
-
+        if not hasattr(self, "_stats_cache"):
+            self._stats_cache = {
+                "total": Notification.objects.count(),
+                "unread": Notification.objects.filter(is_read=False).count(),
+                "users": Notification.objects.values("user").distinct().count(),
+            }
+        s = self._stats_cache
         return format_html(
             "<b>Total:</b> {} | <b>Unread:</b> {} | <b>Users:</b> {}",
-            stats["total_notifications"],
-            stats["unread_notifications"],
-            stats["total_users_with_notifications"]
+            s["total"], s["unread"], s["users"],
         )
 
     notification_stats.short_description = "General Statistics"
