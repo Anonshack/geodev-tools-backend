@@ -5,7 +5,7 @@ from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
@@ -129,6 +129,44 @@ class FileDownloadView(APIView):
         except Exception:
             raise Http404("File not available.")
 
+        safe_name = os.path.basename(stored.name)
+        response = FileResponse(fh, content_type=stored.content_type or "application/octet-stream")
+        response["Content-Disposition"] = f'attachment; filename="{safe_name}"'
+        return response
+
+
+# ── Public file view (no auth — share link) ──────────────────────────────────
+
+class PublicFileView(APIView):
+    """Anyone with the file ID can fetch its metadata + download URL."""
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_summary="Public file info",
+        operation_description="Returns file metadata and a direct download URL. No authentication required.",
+        responses={200: StoredFileSerializer()},
+    )
+    def get(self, request, pk):
+        try:
+            stored = StoredFile.objects.select_related("owner").get(pk=pk)
+        except StoredFile.DoesNotExist:
+            return Response({"detail": "File not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(StoredFileSerializer(stored, context={"request": request}).data)
+
+
+class PublicFileDownloadView(APIView):
+    """Direct file download — no authentication required."""
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk):
+        try:
+            stored = StoredFile.objects.get(pk=pk)
+        except StoredFile.DoesNotExist:
+            raise Http404("File not found.")
+        try:
+            fh = stored.file.open("rb")
+        except Exception:
+            raise Http404("File not available.")
         safe_name = os.path.basename(stored.name)
         response = FileResponse(fh, content_type=stored.content_type or "application/octet-stream")
         response["Content-Disposition"] = f'attachment; filename="{safe_name}"'
