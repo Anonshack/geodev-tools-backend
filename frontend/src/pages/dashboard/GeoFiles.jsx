@@ -46,7 +46,7 @@ function FileCard({ file, onDelete }) {
           <Icon size={18} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-900 truncate" title={file.name}>{file.name}</p>
+          <p className="text-sm font-semibold text-gray-900 dark:text-white truncate" title={file.name}>{file.name}</p>
           <div className="flex items-center gap-2 mt-0.5">
             <span className={clsx('text-[10px] font-medium px-1.5 py-0.5 rounded-full', typeInfo.color)}>
               {typeInfo.label}
@@ -158,7 +158,7 @@ export default function GeoFiles() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Geo Files</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Geo Files</h1>
           <p className="text-sm text-gray-400 mt-0.5">
             Upload geo data files — each gets a permanent public URL
           </p>
@@ -234,7 +234,7 @@ export default function GeoFiles() {
           >
             <ChevronLeft size={16} />
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
             {page} / {totalPages}
           </span>
           <button

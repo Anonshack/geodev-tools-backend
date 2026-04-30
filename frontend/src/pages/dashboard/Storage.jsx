@@ -76,8 +76,8 @@ export default function Storage() {
     <Layout>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Storage</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{data.count} files</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Storage</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{data.count} files</p>
         </div>
         <button
           onClick={() => fileRef.current?.click()}
@@ -106,7 +106,7 @@ export default function Storage() {
         <p className={`text-sm font-medium ${dragOver ? 'text-primary-600' : 'text-gray-400'}`}>
           Drop files here or click to browse
         </p>
-        <p className="text-xs text-gray-400 mt-1">Max 50 MB · Images, PDF, CSV, Geo files</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Max 50 MB · Images, PDF, CSV, Geo files</p>
       </div>
 
       {/* File list */}
@@ -116,7 +116,7 @@ export default function Storage() {
         ) : data.results.length === 0 ? (
           <div className="text-center py-16">
             <FolderOpen size={40} className="text-gray-200 mx-auto mb-3" />
-            <p className="text-gray-400 text-sm">No files yet</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">No files yet</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
@@ -137,8 +137,8 @@ export default function Storage() {
                 <div className="col-span-2">
                   <span className="badge-gray text-xs">{f.content_type?.split('/')[1] || '—'}</span>
                 </div>
-                <div className="col-span-2 text-sm text-gray-500">{formatBytes(f.size)}</div>
-                <div className="col-span-2 text-sm text-gray-500">{formatDate(f.created_at)}</div>
+                <div className="col-span-2 text-sm text-gray-500 dark:text-gray-400">{formatBytes(f.size)}</div>
+                <div className="col-span-2 text-sm text-gray-500 dark:text-gray-400">{formatDate(f.created_at)}</div>
                 <div className="col-span-1 flex items-center justify-end gap-1">
                   <a
                     href={storageApi.downloadUrl(f.id)}
@@ -166,7 +166,7 @@ export default function Storage() {
           <button onClick={() => setPage(p => p - 1)} disabled={!data.previous || loading} className="btn-secondary px-3">
             <ChevronLeft size={16} />
           </button>
-          <span className="text-sm text-gray-500">Page {page} of {Math.ceil(data.count / 20)}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Page {page} of {Math.ceil(data.count / 20)}</span>
           <button onClick={() => setPage(p => p + 1)} disabled={!data.next || loading} className="btn-secondary px-3">
             <ChevronRight size={16} />
           </button>

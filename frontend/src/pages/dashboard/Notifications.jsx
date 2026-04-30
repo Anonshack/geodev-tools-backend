@@ -54,8 +54,8 @@ export default function Notifications() {
     <Layout>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notifications</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
             {data.count} total · {data.unread_count} unread
           </p>
         </div>
@@ -74,22 +74,22 @@ export default function Notifications() {
         ) : data.results.length === 0 ? (
           <div className="text-center py-16">
             <Bell size={40} className="text-gray-200 mx-auto mb-3" />
-            <p className="text-gray-400 text-sm">No notifications</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">No notifications</p>
           </div>
         ) : (
           data.results.map(n => (
             <div
               key={n.id}
-              className={`flex items-start gap-4 px-5 py-4 hover:bg-gray-50 transition-colors ${!n.is_read ? 'bg-primary-50/40' : ''}`}
+              className={`flex items-start gap-4 px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${!n.is_read ? 'bg-primary-50/40 dark:bg-primary-900/10' : ''}`}
             >
               <div className={`mt-0.5 w-2 h-2 rounded-full shrink-0 ${!n.is_read ? 'bg-primary-500' : 'bg-gray-200'}`} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="font-medium text-sm text-gray-900">{n.title}</p>
+                  <p className="font-medium text-sm text-gray-900 dark:text-white">{n.title}</p>
                   <span className={typeColor[n.type] || 'badge-gray'}>{n.type}</span>
                 </div>
-                <p className="text-sm text-gray-500 leading-relaxed">{n.message}</p>
-                <p className="text-xs text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{n.message}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{timeAgo(n.created_at)}</p>
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 {!n.is_read && (
@@ -115,7 +115,7 @@ export default function Notifications() {
           >
             <ChevronLeft size={16} />
           </button>
-          <span className="text-sm text-gray-500">Page {page}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">Page {page}</span>
           <button
             onClick={() => setPage(p => p + 1)} disabled={!data.next || loading}
             className="btn-secondary px-3"

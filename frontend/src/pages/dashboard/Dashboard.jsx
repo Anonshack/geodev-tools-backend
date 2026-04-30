@@ -15,7 +15,7 @@ function StatCard({ icon: Icon, label, value, color, to }) {
         <Icon size={20} className="text-white" />
       </div>
       <div className="min-w-0">
-        <p className="text-2xl font-bold text-gray-900">{value ?? <span className="text-gray-300">—</span>}</p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-white">{value ?? <span className="text-gray-300">—</span>}</p>
         <p className="text-xs text-gray-500 mt-0.5">{label}</p>
       </div>
     </div>
@@ -73,10 +73,10 @@ export default function Dashboard() {
     <Layout>
       {/* Header */}
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Good day, <span className="text-primary-600">{user?.username}</span> 👋
         </h1>
-        <p className="text-gray-400 text-sm mt-1">Your GeoDev Tools workspace overview</p>
+        <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Your GeoDev Tools workspace overview</p>
       </div>
 
       {/* Stats */}
@@ -117,7 +117,7 @@ export default function Dashboard() {
         {/* Recent APIs */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Cpu size={16} className="text-primary-600" /> Recent endpoints
             </h2>
             <Link to="/ai-tools" className="text-xs text-primary-600 hover:underline flex items-center gap-1">
@@ -130,16 +130,16 @@ export default function Dashboard() {
           ) : recentApis.length === 0 ? (
             <div className="text-center py-8">
               <Cpu size={32} className="text-gray-200 mx-auto mb-2" />
-              <p className="text-gray-400 text-sm">No endpoints yet</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">No endpoints yet</p>
               <Link to="/ai-tools" className="text-xs text-primary-600 hover:underline mt-1 inline-block">Generate your first →</Link>
             </div>
           ) : (
             <div className="space-y-3">
               {recentApis.map(api => (
-                <div key={api.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div key={api.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{api.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{api.item_count} items · {timeAgo(api.created_at)}</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{api.title}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{api.item_count} items · {timeAgo(api.created_at)}</p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button
@@ -163,7 +163,7 @@ export default function Dashboard() {
         {/* Recent Notifications */}
         <div className="card p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Bell size={16} className="text-violet-500" /> Notifications
               {stats.unread > 0 && (
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-violet-100 text-violet-700 text-xs font-bold">
@@ -181,19 +181,19 @@ export default function Dashboard() {
           ) : recentNotifs.length === 0 ? (
             <div className="text-center py-8">
               <Bell size={32} className="text-gray-200 mx-auto mb-2" />
-              <p className="text-gray-400 text-sm">No notifications</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">No notifications</p>
             </div>
           ) : (
             <div className="space-y-1">
               {recentNotifs.map(n => (
                 <div
                   key={n.id}
-                  className={`flex items-start gap-3 p-3 rounded-xl transition-colors ${!n.is_read ? 'bg-violet-50' : 'hover:bg-gray-50'}`}
+                  className={`flex items-start gap-3 p-3 rounded-xl transition-colors ${!n.is_read ? 'bg-violet-50 dark:bg-violet-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
                 >
                   <div className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${!n.is_read ? 'bg-violet-500' : 'bg-gray-200'}`} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{n.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{timeAgo(n.created_at)}</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{n.title}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{timeAgo(n.created_at)}</p>
                   </div>
                   <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ${notifTypeColor[n.type] || 'bg-gray-100 text-gray-500'}`}>
                     {n.type}

@@ -63,7 +63,8 @@ class UserListSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name',
-            'company_name', 'profile_image', 'country', 'city', 'is_active', 'date_joined'
+            'company_name', 'profile_image', 'country', 'city',
+            'is_active', 'is_staff', 'is_superuser', 'date_joined'
         )
         read_only_fields = fields
 
@@ -77,9 +78,9 @@ class UserAdminSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 'company_name',
             'profile_image', 'bio', 'phone_number', 'address', 'country', 'city',
-            'is_active', 'is_staff', 'date_joined', 'last_login',
+            'is_active', 'is_staff', 'is_superuser', 'date_joined', 'last_login',
         )
-        read_only_fields = ('id', 'email', 'username', 'date_joined', 'last_login')
+        read_only_fields = ('id', 'email', 'username', 'is_superuser', 'date_joined', 'last_login')
 
 
 class ChangePasswordSerializer(serializers.Serializer):

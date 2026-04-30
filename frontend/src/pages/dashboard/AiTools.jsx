@@ -4,7 +4,7 @@ import Layout from '../../components/Layout'
 import Spinner from '../../components/Spinner'
 import {
   Cpu, Sparkles, Copy, Trash2, RefreshCw, ExternalLink,
-  ChevronLeft, ChevronRight, ToggleLeft, ToggleRight, Eye,
+  ChevronLeft, ChevronRight, ToggleLeft, ToggleRight,
 } from 'lucide-react'
 import { timeAgo } from '../../utils/format'
 import toast from 'react-hot-toast'
@@ -13,13 +13,12 @@ import clsx from 'clsx'
 const EXAMPLE_PROMPTS = [
   'Generate 20 users with fields: id, name, email, age, country, avatar_url',
   'Generate 15 products with fields: id, title, price, category, in_stock, rating',
-  'Generate 10 blog posts with fields: id, title, author, content, published_at, tags',
-  'Generate 30 employees with fields: id, name, department, salary, hire_date, is_active',
+  'Create an API with Users (id, name, email, country, avatar_url) and Books (book_id, book_name, author, date, pdf_url)',
+  'Create endpoints: employees (id, name, department, salary, is_active) and departments (id, name, budget, location)',
 ]
 
 function MockApiCard({ api, onDelete, onToggle, onRegenerate }) {
   const [regenerating, setRegen] = useState(false)
-
   const copy = (text) => { navigator.clipboard.writeText(text); toast.success('Copied!') }
 
   const regen = async () => {
@@ -28,29 +27,47 @@ function MockApiCard({ api, onDelete, onToggle, onRegenerate }) {
     finally { setRegen(false) }
   }
 
+  const isMulti = api.endpoints && api.endpoints.length > 0
+
   return (
     <div className={clsx('card p-5 transition-opacity', !api.is_active && 'opacity-60')}>
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-gray-900 truncate text-sm">{api.title}</p>
-          <p className="text-xs text-gray-400 mt-0.5">{timeAgo(api.created_at)} · {api.item_count} items · {api.hit_count} hits</p>
+          <p className="font-semibold text-gray-900 dark:text-white truncate text-sm">{api.title}</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+            {timeAgo(api.created_at)} · {api.item_count} items{isMulti ? ` · ${api.endpoints.length} endpoints` : ''} · {api.hit_count} hits
+          </p>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {api.is_expired && <span className="badge-red">Expired</span>}
           {!api.is_active && <span className="badge-gray">Inactive</span>}
+          {isMulti && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-700">MULTI</span>}
         </div>
       </div>
 
-      {/* Mock URL */}
-      <div className="bg-gray-50 rounded-lg px-3 py-2 flex items-center gap-2 mb-4">
+      {/* Single main URL for both single and multi */}
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 flex items-center gap-2 mb-2">
         <code className="text-xs text-primary-700 font-mono flex-1 truncate">{api.mock_url}</code>
-        <button onClick={() => copy(api.mock_url)} className="text-gray-400 hover:text-gray-600 shrink-0">
-          <Copy size={13} />
-        </button>
-        <a href={api.mock_url} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600 shrink-0">
-          <ExternalLink size={13} />
-        </a>
+        <button onClick={() => copy(api.mock_url)} className="text-gray-400 hover:text-gray-600 shrink-0"><Copy size={13} /></button>
+        <a href={api.mock_url} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-600 shrink-0"><ExternalLink size={13} /></a>
       </div>
+
+      {/* Sub-endpoint pills for multi */}
+      {isMulti && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {api.endpoints.map(ep => (
+            <a
+              key={ep}
+              href={api.endpoint_urls[ep]}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary-50 text-primary-600 hover:bg-primary-100 border border-primary-100 transition-colors"
+            >
+              /{ep}
+            </a>
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center gap-2 flex-wrap">
         <button onClick={regen} disabled={regenerating} className="btn-secondary text-xs px-3 py-1.5">
@@ -134,8 +151,8 @@ export default function AiTools() {
   return (
     <Layout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Mock API Generator</h1>
-        <p className="text-sm text-gray-500 mt-0.5">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Mock API Generator</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
           Describe your data → AI generates it → get a permanent REST endpoint
         </p>
       </div>
@@ -144,7 +161,7 @@ export default function AiTools() {
       <div className="card p-6 mb-8">
         <div className="flex items-center gap-2 mb-5">
           <Sparkles size={18} className="text-primary-600" />
-          <h2 className="font-semibold text-gray-900">Generate new endpoint</h2>
+          <h2 className="font-semibold text-gray-900 dark:text-white">Generate new endpoint</h2>
         </div>
 
         <form onSubmit={generate} className="space-y-4">
@@ -197,24 +214,20 @@ export default function AiTools() {
 
         {generated && (
           <div className="mt-6 bg-primary-50 border border-primary-100 rounded-xl p-5">
-            <p className="text-sm font-semibold text-primary-800 mb-3">
+            <p className="text-sm font-semibold text-primary-800 dark:text-primary-300 mb-3">
               ✅ {generated.item_count} items generated!
+              {generated.endpoints && <span className="ml-2 text-xs font-normal text-primary-600">({generated.endpoints.join(', ')})</span>}
             </p>
-            <p className="text-xs text-gray-600 mb-2 font-medium">Your public endpoint:</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 font-medium">Your public link:</p>
             <div className="bg-white rounded-lg px-3 py-2.5 flex items-center gap-2 border border-primary-200">
               <code className="text-xs text-primary-700 font-mono flex-1 break-all">{generated.mock_url}</code>
-              <button
-                onClick={() => { navigator.clipboard.writeText(generated.mock_url); toast.success('Copied!') }}
-                className="text-primary-500 hover:text-primary-700 shrink-0"
-              >
-                <Copy size={14} />
-              </button>
-              <a href={generated.mock_url} target="_blank" rel="noreferrer" className="text-primary-500 hover:text-primary-700 shrink-0">
-                <ExternalLink size={14} />
-              </a>
+              <button onClick={() => { navigator.clipboard.writeText(generated.mock_url); toast.success('Copied!') }} className="text-primary-500 hover:text-primary-700 shrink-0"><Copy size={14} /></button>
+              <a href={generated.mock_url} target="_blank" rel="noreferrer" className="text-primary-500 hover:text-primary-700 shrink-0"><ExternalLink size={14} /></a>
             </div>
-            <p className="text-xs text-gray-500 mt-3">
-              Use <code className="bg-white px-1 rounded">fetch('{generated.mock_url}')</code> in your frontend project.
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              {generated.endpoints
+                ? `Open the link → click ${generated.endpoints.map(e => `"${e}"`).join(' or ')} to see the data.`
+                : `Use fetch('${generated.mock_url}') in your project.`}
             </p>
           </div>
         )}
@@ -222,14 +235,14 @@ export default function AiTools() {
 
       {/* My APIs list */}
       <div>
-        <h2 className="font-semibold text-gray-900 mb-4">My Mock APIs ({apis.count})</h2>
+        <h2 className="font-semibold text-gray-900 dark:text-white mb-4">My Mock APIs ({apis.count})</h2>
 
         {listLoading ? (
           <div className="flex justify-center py-10"><Spinner size={28} className="text-primary-600" /></div>
         ) : apis.results.length === 0 ? (
           <div className="card text-center py-16">
             <Cpu size={40} className="text-gray-200 mx-auto mb-3" />
-            <p className="text-gray-400 text-sm">No mock APIs yet. Generate your first one above!</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">No mock APIs yet. Generate your first one above!</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
@@ -249,7 +262,7 @@ export default function AiTools() {
             <button onClick={() => setPage(p => p - 1)} disabled={!apis.previous || listLoading} className="btn-secondary px-3">
               <ChevronLeft size={16} />
             </button>
-            <span className="text-sm text-gray-500">Page {page}</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Page {page}</span>
             <button onClick={() => setPage(p => p + 1)} disabled={!apis.next || listLoading} className="btn-secondary px-3">
               <ChevronRight size={16} />
             </button>

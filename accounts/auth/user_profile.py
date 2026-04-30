@@ -1,5 +1,13 @@
 from drf_yasg.utils import swagger_auto_schema
+from django.db import models as db_models
 from rest_framework import generics, permissions, status
+from rest_framework.pagination import PageNumberPagination
+
+
+class UserPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = "page_size"
+    max_page_size = 100
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,9 +34,21 @@ class ChangePasswordView(APIView):
 
 
 class GetAllUsers(generics.ListAPIView):
-    queryset = User.objects.all()
     serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+    pagination_class = UserPagination
+
+    def get_queryset(self):
+        qs = User.objects.all().order_by('-date_joined')
+        search = self.request.query_params.get('search', '').strip()
+        if search:
+            qs = qs.filter(
+                db_models.Q(username__icontains=search) |
+                db_models.Q(email__icontains=search) |
+                db_models.Q(first_name__icontains=search) |
+                db_models.Q(last_name__icontains=search)
+            )
+        return qs
 
 
 class AdminUserDetailView(APIView):

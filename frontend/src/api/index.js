@@ -7,6 +7,7 @@ export const authApi = {
   logout:                (refresh) => api.post('/api/v1/auth/logout/', { refresh }),
   generateApiKey:        ()        => api.post('/api/v1/auth/generate-key/'),
   passwordResetRequest:  (email)   => api.post('/api/v1/auth/password-reset/', { email }),
+  passwordResetConfirm:  (uid, token) => api.get(`/api/v1/auth/password-reset/confirm/${uid}/${token}/`),
   passwordResetComplete: (data)    => api.post('/api/v1/auth/password-reset/complete/', data),
 }
 
@@ -52,7 +53,7 @@ export const adminApi = {
   stats:              ()           => api.get('/api/v1/users/admin-stats/'),
 
   // Users
-  users:              (page = 1)   => api.get(`/api/v1/users/all-users/?page=${page}`),
+  users:              (page = 1, search = '') => api.get(`/api/v1/users/all-users/?page=${page}${search ? `&search=${encodeURIComponent(search)}` : ''}`),
   userDetail:         (pk)         => api.get(`/api/v1/users/admin-users/${pk}/`),
   userUpdate:         (pk, data)   => api.patch(`/api/v1/users/admin-users/${pk}/`, data),
   userDelete:         (pk)         => api.delete(`/api/v1/users/admin-users/${pk}/`),

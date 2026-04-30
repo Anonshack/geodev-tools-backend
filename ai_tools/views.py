@@ -11,7 +11,10 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
 from .models import MockAPI
-from .serializers import MockAPICreateSerializer, MockAPISerializer, MockAPIDetailSerializer, MockAPIAdminSerializer
+from .serializers import (
+    MockAPICreateSerializer, MockAPISerializer,
+    MockAPIDetailSerializer, MockAPIAdminSerializer,
+)
 from .ai_generator import generate_mock_data
 
 
@@ -66,12 +69,17 @@ class GenerateMockAPIView(APIView):
         if expires_in_days:
             expires_at = timezone.now() + timedelta(days=expires_in_days)
 
+        if isinstance(data, dict):
+            item_count = sum(len(v) for v in data.values() if isinstance(v, list))
+        else:
+            item_count = len(data)
+
         mock_api = MockAPI.objects.create(
             owner=request.user,
             prompt=prompt,
             title=title,
             data=data,
-            item_count=len(data),
+            item_count=item_count,
             expires_at=expires_at,
         )
 
@@ -106,6 +114,35 @@ class MockAPIPublicView(APIView):
 
         MockAPI.objects.filter(pk=mock_api.pk).update(hit_count=F("hit_count") + 1)
         return Response(mock_api.data)
+
+
+class MockAPIEndpointView(APIView):
+    """Sub-endpoint for multi-endpoint APIs: /mock/<slug>/<endpoint>/"""
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug, endpoint):
+        try:
+            mock_api = MockAPI.objects.get(slug=slug, is_active=True)
+        except MockAPI.DoesNotExist:
+            return Response({"detail": "Mock API not found or inactive."}, status=status.HTTP_404_NOT_FOUND)
+
+        if mock_api.is_expired():
+            return Response({"detail": "This mock API link has expired."}, status=status.HTTP_410_GONE)
+
+        if not isinstance(mock_api.data, dict):
+            return Response(
+                {"detail": "This is a single-endpoint API.", "url": request.build_absolute_uri(f"/api/v1/geodev-ai/mock/{slug}/")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if endpoint not in mock_api.data:
+            return Response(
+                {"detail": f"Endpoint '{endpoint}' not found.", "available": list(mock_api.data.keys())},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        MockAPI.objects.filter(pk=mock_api.pk).update(hit_count=F("hit_count") + 1)
+        return Response(mock_api.data[endpoint])
 
 
 class UserMockAPIListView(ListAPIView):
@@ -199,18 +236,30 @@ class RegenerateMockAPIView(APIView):
         except MockAPI.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        count = request.data.get("count", obj.item_count) or obj.item_count
+        # For multi-endpoint, use per-endpoint count; for single, use total
+        if isinstance(obj.data, dict) and obj.data:
+            num_endpoints = len(obj.data)
+            default_count = max(1, obj.item_count // num_endpoints)
+        else:
+            default_count = obj.item_count
+
+        count = request.data.get("count", default_count) or default_count
         try:
             count = max(1, min(500, int(count)))
         except (ValueError, TypeError):
-            count = obj.item_count
+            count = default_count
 
         data, error = generate_mock_data(obj.prompt, count)
         if error:
             return Response({"detail": error}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+        if isinstance(data, dict):
+            item_count = sum(len(v) for v in data.values() if isinstance(v, list))
+        else:
+            item_count = len(data)
+
         obj.data = data
-        obj.item_count = len(data)
+        obj.item_count = item_count
         obj.save(update_fields=["data", "item_count"])
 
         return Response(MockAPIDetailSerializer(obj, context={"request": request}).data)

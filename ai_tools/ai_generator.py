@@ -8,34 +8,33 @@ logger = logging.getLogger(__name__)
 _client = Client()
 
 _SYSTEM_PROMPT = """You are a mock API data generator.
+
 Rules:
-- Return ONLY a valid JSON array. No markdown, no explanation, no code blocks.
-- Every item in the array must have the same fields.
-- Use realistic, varied values (not placeholder text like "string" or "value1").
-- IDs must be sequential integers starting from 1.
-- Generate exactly the number of items requested.
+- Return ONLY valid JSON. No markdown, no explanation, no code blocks.
+- If the request describes ONE resource type (e.g. "users", "products"), return a JSON ARRAY.
+- If the request describes MULTIPLE endpoints or resource types (e.g. "users and books", "products and categories"), return a JSON OBJECT where each key is the endpoint name in lowercase_snake_case and each value is a JSON ARRAY.
+- All items in each array must share the same fields with realistic, varied values.
+- Never use placeholder text like "string", "value1", or "example.com".
+- IDs must be sequential integers starting from 1 for each resource.
+- Dates must be realistic ISO 8601 strings. URLs must look real (e.g. https://i.pravatar.cc/150?img=3).
 """
 
 
 def _build_user_prompt(prompt: str, count: int) -> str:
     return (
-        f"Generate exactly {count} items.\n"
         f"User request: {prompt}\n"
-        f"Return a JSON array with exactly {count} objects. No other text."
+        f"Generate exactly {count} items per resource/endpoint.\n"
+        "Return JSON only. No other text."
     )
 
 
 def _extract_json(text: str):
-    """Robustly extract a JSON array or object from AI response text."""
     text = text.strip()
-
-    # Direct parse
     try:
         return json.loads(text)
     except json.JSONDecodeError:
         pass
 
-    # Strip markdown code fence: ```json ... ``` or ``` ... ```
     match = re.search(r"```(?:json)?\s*([\s\S]+?)\s*```", text)
     if match:
         try:
@@ -43,7 +42,16 @@ def _extract_json(text: str):
         except json.JSONDecodeError:
             pass
 
-    # Find first JSON array in text
+    # Try object first (multi-endpoint), then array
+    match = re.search(r"(\{[\s\S]*\})", text)
+    if match:
+        try:
+            result = json.loads(match.group(1))
+            if isinstance(result, dict) and any(isinstance(v, list) for v in result.values()):
+                return result
+        except json.JSONDecodeError:
+            pass
+
     match = re.search(r"(\[[\s\S]*\])", text)
     if match:
         try:
@@ -51,22 +59,44 @@ def _extract_json(text: str):
         except json.JSONDecodeError:
             pass
 
-    # Find first JSON object in text
-    match = re.search(r"(\{[\s\S]*\})", text)
-    if match:
-        try:
-            result = json.loads(match.group(1))
-            return [result]
-        except json.JSONDecodeError:
-            pass
+    return None
+
+
+def _pad_or_trim(lst: list, count: int) -> list:
+    if not lst:
+        return lst
+    if len(lst) > count:
+        return lst[:count]
+    template = lst[-1].copy()
+    for i in range(len(lst), count):
+        item = template.copy()
+        if "id" in item:
+            item["id"] = i + 1
+        lst.append(item)
+    return lst
+
+
+def _normalize(data, count: int):
+    if isinstance(data, list):
+        return _pad_or_trim(data, count)
+
+    if isinstance(data, dict):
+        result = {}
+        for key, val in data.items():
+            clean_key = key.lower().replace(" ", "_")
+            if isinstance(val, list):
+                result[clean_key] = _pad_or_trim(val, count)
+            elif isinstance(val, dict):
+                result[clean_key] = [val]
+        return result if result else None
 
     return None
 
 
 def generate_mock_data(prompt: str, count: int, retries: int = 2):
     """
-    Call g4f to generate mock JSON data.
-    Returns (data: list, error: str | None).
+    Returns (data, error).
+    data is a list for single-endpoint, dict for multi-endpoint.
     """
     user_prompt = _build_user_prompt(prompt, count)
 
@@ -86,19 +116,10 @@ def generate_mock_data(prompt: str, count: int, retries: int = 2):
                 logger.warning("AI returned non-JSON (attempt %d): %s", attempt + 1, raw[:200])
                 continue
 
-            if not isinstance(data, list):
-                data = [data]
-
-            # Trim or pad to exact count
-            if len(data) > count:
-                data = data[:count]
-            elif len(data) < count and data:
-                template = data[-1].copy()
-                for i in range(len(data), count):
-                    item = template.copy()
-                    if "id" in item:
-                        item["id"] = i + 1
-                    data.append(item)
+            data = _normalize(data, count)
+            if data is None:
+                logger.warning("Could not normalize AI response (attempt %d)", attempt + 1)
+                continue
 
             return data, None
 

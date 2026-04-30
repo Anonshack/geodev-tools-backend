@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { MapPin, Eye, EyeOff } from 'lucide-react'
+import { MapPin, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Spinner from '../../components/Spinner'
 
@@ -12,12 +12,18 @@ export default function Register() {
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [generalError, setGeneralError] = useState('')
 
-  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+  const set = (k) => (e) => {
+    setErrors(s => ({ ...s, [k]: '' }))
+    setGeneralError('')
+    setForm({ ...form, [k]: e.target.value })
+  }
 
   const submit = async (e) => {
     e.preventDefault()
     setErrors({})
+    setGeneralError('')
     setLoading(true)
     try {
       await register(form)
@@ -26,8 +32,20 @@ export default function Register() {
       navigate('/dashboard')
     } catch (err) {
       const data = err.response?.data
-      if (typeof data === 'string') toast.error(data)
-      else setErrors(data || {})
+      if (!data) {
+        setGeneralError('Something went wrong. Please try again.')
+      } else if (typeof data === 'string') {
+        setGeneralError(data)
+      } else if (data.detail) {
+        setGeneralError(data.detail)
+      } else {
+        // field-level errors
+        setErrors({
+          username: Array.isArray(data.username) ? data.username[0] : data.username,
+          email:    Array.isArray(data.email)    ? data.email[0]    : data.email,
+          password: Array.isArray(data.password) ? data.password[0] : data.password,
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -46,13 +64,26 @@ export default function Register() {
 
         <div className="card p-8">
           <form onSubmit={submit} className="space-y-4">
+
+            {/* General error */}
+            {generalError && (
+              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700">
+                <AlertCircle size={16} className="shrink-0 text-red-500" />
+                <p className="text-sm font-medium">{generalError}</p>
+              </div>
+            )}
+
             <div>
               <label className="label">Username</label>
               <input
                 className={`input ${errors.username ? 'input-error' : ''}`}
                 placeholder="johndoe" value={form.username} onChange={set('username')} required
               />
-              {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+              {errors.username && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle size={11} /> {errors.username}
+                </p>
+              )}
             </div>
 
             <div>
@@ -62,7 +93,11 @@ export default function Register() {
                 type="email" placeholder="you@example.com"
                 value={form.email} onChange={set('email')} required
               />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle size={11} /> {errors.email}
+                </p>
+              )}
             </div>
 
             <div>
@@ -92,7 +127,11 @@ export default function Register() {
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle size={11} /> {errors.password}
+                </p>
+              )}
             </div>
 
             <button type="submit" className="btn-primary w-full mt-2" disabled={loading}>

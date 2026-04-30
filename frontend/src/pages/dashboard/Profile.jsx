@@ -11,7 +11,7 @@ import toast from 'react-hot-toast'
 function Section({ title, children }) {
   return (
     <div className="card p-6 mb-5">
-      <h2 className="font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-50">{title}</h2>
+      <h2 className="font-semibold text-gray-900 dark:text-white mb-5 pb-3 border-b border-gray-50 dark:border-gray-700">{title}</h2>
       {children}
     </div>
   )
@@ -98,17 +98,15 @@ export default function Profile() {
     }
   }
 
-  const avatarUrl = user?.profile_image?.startsWith('http')
-    ? user.profile_image
-    : user?.profile_image
-      ? user.profile_image
-      : null
+  const avatarUrl = user?.profile_image
+    ? (user.profile_image.startsWith('http') ? user.profile_image : user.profile_image)
+    : null
 
   return (
     <Layout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Manage your account settings</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Manage your account settings</p>
       </div>
 
       <div className="max-w-2xl">
@@ -131,9 +129,9 @@ export default function Profile() {
               <input ref={imgRef} type="file" accept="image/*" className="hidden" onChange={(e) => uploadAvatar(e.target.files[0])} />
             </div>
             <div>
-              <p className="font-semibold text-gray-900">{user?.username}</p>
-              <p className="text-sm text-gray-500">{user?.email}</p>
-              <p className="text-xs text-gray-400 mt-0.5">Joined {formatDate(user?.date_joined)}</p>
+              <p className="font-semibold text-gray-900 dark:text-white">{user?.username}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Joined {formatDate(user?.date_joined)}</p>
             </div>
           </div>
 
@@ -209,12 +207,12 @@ export default function Profile() {
 
         {/* API Key */}
         <Section title="API Key">
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Use this key to authenticate with GeoDev Tools API from external services.
           </p>
           {user?.api_key ? (
-            <div className="bg-gray-50 rounded-xl p-3.5 flex items-center gap-3 mb-4 border border-gray-100">
-              <code className="text-xs font-mono text-gray-700 break-all flex-1">{user.api_key}</code>
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3.5 flex items-center gap-3 mb-4 border border-gray-100">
+              <code className="text-xs font-mono text-gray-700 dark:text-gray-300 break-all flex-1">{user.api_key}</code>
               <button
                 onClick={() => { navigator.clipboard.writeText(user.api_key); toast.success('Copied!') }}
                 className="text-primary-600 hover:text-primary-700 text-xs font-medium shrink-0"
@@ -223,7 +221,7 @@ export default function Profile() {
               </button>
             </div>
           ) : (
-            <p className="text-sm text-gray-400 mb-4">No API key. Generate one below.</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">No API key. Generate one below.</p>
           )}
           <button onClick={generateKey} disabled={keyLoading} className="btn-secondary">
             {keyLoading ? <Spinner size={16} /> : <RefreshCw size={16} />}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { MapPin, Eye, EyeOff } from 'lucide-react'
+import { MapPin, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Spinner from '../../components/Spinner'
 
@@ -11,22 +11,29 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [error, setError] = useState('')
 
-  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+  const set = (k) => (e) => {
+    setError('')
+    setForm({ ...form, [k]: e.target.value })
+  }
 
   const submit = async (e) => {
     e.preventDefault()
-    setErrors({})
+    setError('')
     setLoading(true)
     try {
-      await login(form)
+      const profile = await login(form)
       toast.success('Welcome back!')
-      navigate('/dashboard')
+      navigate(profile?.is_staff ? '/admin' : '/dashboard')
     } catch (err) {
       const data = err.response?.data
-      if (data?.detail) toast.error(data.detail)
-      else setErrors(data || {})
+      const msg = data?.detail
+        || data?.email?.[0]
+        || data?.password?.[0]
+        || data?.non_field_errors?.[0]
+        || 'Login or password is incorrect'
+      setError(msg)
     } finally {
       setLoading(false)
     }
@@ -46,14 +53,22 @@ export default function Login() {
 
         <div className="card p-8">
           <form onSubmit={submit} className="space-y-5">
+
+            {/* Error alert */}
+            {error && (
+              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700">
+                <AlertCircle size={16} className="shrink-0 text-red-500" />
+                <p className="text-sm font-medium">{error}</p>
+              </div>
+            )}
+
             <div>
               <label className="label">Email</label>
               <input
-                className={`input ${errors.email ? 'input-error' : ''}`}
+                className={`input ${error ? 'input-error' : ''}`}
                 type="email" placeholder="you@example.com"
                 value={form.email} onChange={set('email')} required
               />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
 
             <div>
@@ -65,7 +80,7 @@ export default function Login() {
               </div>
               <div className="relative">
                 <input
-                  className={`input pr-10 ${errors.password ? 'input-error' : ''}`}
+                  className={`input pr-10 ${error ? 'input-error' : ''}`}
                   type={showPw ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={form.password} onChange={set('password')} required
@@ -78,7 +93,6 @@ export default function Login() {
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
 
             <button type="submit" className="btn-primary w-full" disabled={loading}>

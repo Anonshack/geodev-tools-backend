@@ -30,17 +30,19 @@ class PasswordResetRequestView(APIView):
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
         token = PasswordResetTokenGenerator().make_token(user)
 
-        reset_url = request.build_absolute_uri(
-            f"/api/v1/auth/password-reset/confirm/{uidb64}/{token}/"
-        )
+        from django.conf import settings as django_settings
+        frontend_url = getattr(django_settings, 'FRONTEND_URL', 'http://localhost:3000')
+        reset_url = f"{frontend_url}/reset-password/{uidb64}/{token}"
+
         email_body = (
-            f"Hello {user.username},\n"
-            f"Click the link below to reset your password:\n{reset_url}"
+            f"Hello {user.username},\n\n"
+            f"Click the link below to reset your password:\n{reset_url}\n\n"
+            f"This link will expire after use. If you didn't request a reset, ignore this email."
         )
 
         from django.core.mail import EmailMessage
         msg = EmailMessage(
-            subject="Reset your password",
+            subject="Reset your password — GeoDev Tools",
             body=email_body,
             to=[user.email],
         )

@@ -11,8 +11,10 @@ export function AuthProvider({ children }) {
     try {
       const { data } = await profileApi.get()
       setUser(data)
+      return data
     } catch {
       setUser(null)
+      return null
     }
   }, [])
 
@@ -26,9 +28,9 @@ export function AuthProvider({ children }) {
     const { data } = await authApi.login(credentials)
     localStorage.setItem('access', data.access)
     localStorage.setItem('refresh', data.refresh)
-    await fetchProfile()
+    const profile = await fetchProfile()
     geoApi.saveLocation().catch(() => {})
-    return data
+    return profile
   }
 
   const logout = async () => {
