@@ -43,7 +43,7 @@ class MockAPISerializer(serializers.ModelSerializer):
         model = MockAPI
         fields = (
             "id", "slug", "title", "prompt",
-            "item_count", "hit_count", "is_active",
+            "item_count", "hit_count", "is_active", "admin_disabled",
             "created_at", "expires_at", "is_expired",
             "mock_url", "endpoints", "endpoint_urls",
         )

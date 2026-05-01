@@ -21,6 +21,7 @@ class MockAPI(models.Model):
     item_count = models.PositiveIntegerField(default=0)
     hit_count = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
+    admin_disabled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(null=True, blank=True)
 

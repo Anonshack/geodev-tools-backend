@@ -40,7 +40,12 @@ function MockApiCard({ api, onDelete, onToggle, onRegenerate }) {
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {api.is_expired && <span className="badge-red">Expired</span>}
-          {!api.is_active && <span className="badge-gray">Inactive</span>}
+          {api.admin_disabled && (
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400">
+              Admin disabled
+            </span>
+          )}
+          {!api.is_active && !api.admin_disabled && <span className="badge-gray">Inactive</span>}
           {isMulti && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-700">MULTI</span>}
         </div>
       </div>
@@ -73,10 +78,16 @@ function MockApiCard({ api, onDelete, onToggle, onRegenerate }) {
         <button onClick={regen} disabled={regenerating} className="btn-secondary text-xs px-3 py-1.5">
           {regenerating ? <Spinner size={12} /> : <RefreshCw size={12} />} Regenerate
         </button>
-        <button onClick={() => onToggle(api.id)} className="btn-secondary text-xs px-3 py-1.5">
-          {api.is_active ? <ToggleRight size={12} className="text-primary-600" /> : <ToggleLeft size={12} />}
-          {api.is_active ? 'Deactivate' : 'Activate'}
-        </button>
+        {api.admin_disabled ? (
+          <span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 cursor-not-allowed select-none">
+            <ToggleLeft size={12} /> Blocked by admin
+          </span>
+        ) : (
+          <button onClick={() => onToggle(api.id)} className="btn-secondary text-xs px-3 py-1.5">
+            {api.is_active ? <ToggleRight size={12} className="text-primary-600" /> : <ToggleLeft size={12} />}
+            {api.is_active ? 'Deactivate' : 'Activate'}
+          </button>
+        )}
         <button onClick={() => onDelete(api.id)} className="btn-ghost text-xs px-3 py-1.5 text-red-500 hover:bg-red-50">
           <Trash2 size={12} /> Delete
         </button>

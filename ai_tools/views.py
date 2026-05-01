@@ -194,6 +194,11 @@ class UserMockAPIDetailView(APIView):
         obj = self._get_own(request, pk)
         if not obj:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        if obj.admin_disabled:
+            return Response(
+                {"detail": "This Mock API has been disabled by an administrator and cannot be activated."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         obj.is_active = not obj.is_active
         obj.save(update_fields=["is_active"])
         return Response(MockAPISerializer(obj, context={"request": request}).data)
@@ -292,8 +297,15 @@ class AdminMockAPIDetailView(APIView):
         obj = self._get(pk)
         if not obj:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        obj.is_active = not obj.is_active
-        obj.save(update_fields=["is_active"])
+        if obj.is_active:
+            # Admin o'chirayapti — admin_disabled=True qilamiz
+            obj.is_active = False
+            obj.admin_disabled = True
+        else:
+            # Admin yoqayapti — admin_disabled=False qilamiz
+            obj.is_active = True
+            obj.admin_disabled = False
+        obj.save(update_fields=["is_active", "admin_disabled"])
         return Response(MockAPIAdminSerializer(obj, context={"request": request}).data)
 
     def delete(self, request, pk):

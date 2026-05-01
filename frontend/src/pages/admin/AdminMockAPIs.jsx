@@ -115,14 +115,20 @@ export default function AdminMockAPIs() {
                     <td className="px-4 py-3 text-gray-700 dark:text-slate-300 font-mono text-xs">{api.item_count}</td>
                     <td className="px-4 py-3 text-gray-500 dark:text-slate-400 font-mono text-xs">{api.hit_count}</td>
                     <td className="px-4 py-3">
-                      <span className={clsx(
-                        'text-[11px] font-semibold px-2 py-0.5 rounded-full',
-                        api.is_active
-                          ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400'
-                          : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
-                      )}>
-                        {api.is_active ? 'Active' : 'Off'}
-                      </span>
+                      {api.admin_disabled ? (
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400">
+                          Admin off
+                        </span>
+                      ) : (
+                        <span className={clsx(
+                          'text-[11px] font-semibold px-2 py-0.5 rounded-full',
+                          api.is_active
+                            ? 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400'
+                            : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
+                        )}>
+                          {api.is_active ? 'Active' : 'Off'}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-gray-500 dark:text-slate-400 text-xs whitespace-nowrap">{formatDate(api.created_at)}</td>
                     <td className="px-4 py-3">
@@ -144,12 +150,14 @@ export default function AdminMockAPIs() {
                         <button
                           onClick={() => toggle(api)}
                           disabled={!!busy(api.id)}
-                          title={api.is_active ? 'Deactivate' : 'Activate'}
+                          title={api.is_active ? 'Disable (user cannot reactivate)' : api.admin_disabled ? 'Enable (user can use again)' : 'Activate'}
                           className={clsx(
                             'p-1.5 rounded-lg transition-colors disabled:opacity-50',
                             api.is_active
                               ? 'text-amber-500 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30'
-                              : 'text-emerald-500 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
+                              : api.admin_disabled
+                                ? 'text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30'
+                                : 'text-emerald-500 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
                           )}
                         >
                           {busy(api.id) === 'toggle'
