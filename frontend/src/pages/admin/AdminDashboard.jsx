@@ -98,8 +98,8 @@ export default function AdminDashboard() {
                         <p className="text-xs text-gray-400 dark:text-slate-500 truncate">{u.email}</p>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        {u.is_superuser && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-900/50 text-amber-400">SU</span>}
-                        {!u.is_superuser && u.is_staff && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-900/50 text-indigo-400">Staff</span>}
+                        {u.is_superuser && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400">Superuser</span>}
+                        {!u.is_superuser && u.is_staff && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-400">Staff</span>}
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${u.is_active ? 'bg-emerald-900/50 text-emerald-400' : 'bg-red-900/50 text-red-400'}`}>
                           {u.is_active ? 'Active' : 'Off'}
                         </span>

@@ -11,16 +11,16 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState({})
 
   const set = (k) => (e) => {
-    setError('')
-    setForm({ ...form, [k]: e.target.value })
+    setErrors(prev => ({ ...prev, [k]: '', general: '' }))
+    setForm(prev => ({ ...prev, [k]: e.target.value }))
   }
 
   const submit = async (e) => {
     e.preventDefault()
-    setError('')
+    setErrors({})
     setLoading(true)
     try {
       const profile = await login(form)
@@ -28,16 +28,23 @@ export default function Login() {
       navigate(profile?.is_staff ? '/admin' : '/dashboard')
     } catch (err) {
       const data = err.response?.data
-      const msg = data?.detail
-        || data?.email?.[0]
-        || data?.password?.[0]
-        || data?.non_field_errors?.[0]
-        || 'Login or password is incorrect'
-      setError(msg)
+      if (data) {
+        const newErrors = {}
+        if (data.email)            newErrors.email    = Array.isArray(data.email) ? data.email[0] : data.email
+        if (data.password)         newErrors.password = Array.isArray(data.password) ? data.password[0] : data.password
+        if (data.non_field_errors) newErrors.general  = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors
+        if (data.detail)           newErrors.general  = data.detail
+        if (Object.keys(newErrors).length === 0) newErrors.general = 'Login or password is incorrect'
+        setErrors(newErrors)
+      } else {
+        setErrors({ general: 'Something went wrong. Please try again.' })
+      }
     } finally {
       setLoading(false)
     }
   }
+
+  const hasError = Object.values(errors).some(Boolean)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-gray-50 flex items-center justify-center p-4">
@@ -54,23 +61,33 @@ export default function Login() {
         <div className="card p-8">
           <form onSubmit={submit} className="space-y-5">
 
-            {/* Error alert */}
-            {error && (
+            {/* General error */}
+            {errors.general && (
               <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700">
                 <AlertCircle size={16} className="shrink-0 text-red-500" />
-                <p className="text-sm font-medium">{error}</p>
+                <p className="text-sm font-medium">{errors.general}</p>
               </div>
             )}
 
+            {/* Email */}
             <div>
               <label className="label">Email</label>
               <input
-                className={`input ${error ? 'input-error' : ''}`}
-                type="email" placeholder="you@example.com"
-                value={form.email} onChange={set('email')} required
+                className={`input ${errors.email || (errors.general && !errors.password) ? 'input-error' : ''}`}
+                type="email"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={set('email')}
+                required
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle size={11} /> {errors.email}
+                </p>
+              )}
             </div>
 
+            {/* Password */}
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <label className="label mb-0">Password</label>
@@ -80,10 +97,12 @@ export default function Login() {
               </div>
               <div className="relative">
                 <input
-                  className={`input pr-10 ${error ? 'input-error' : ''}`}
+                  className={`input pr-10 ${errors.password || errors.general ? 'input-error' : ''}`}
                   type={showPw ? 'text' : 'password'}
                   placeholder="••••••••"
-                  value={form.password} onChange={set('password')} required
+                  value={form.password}
+                  onChange={set('password')}
+                  required
                 />
                 <button
                   type="button"
@@ -93,6 +112,11 @@ export default function Login() {
                   {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <AlertCircle size={11} /> {errors.password}
+                </p>
+              )}
             </div>
 
             <button type="submit" className="btn-primary w-full" disabled={loading}>

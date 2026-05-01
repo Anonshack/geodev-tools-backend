@@ -18,6 +18,10 @@ api.interceptors.response.use(
   async (err) => {
     const original = err.config
     if (err.response?.status === 401 && !original._retry) {
+      // Login endpoint xatosi — interceptor aralaShmasin, error Login.jsx ga borsin
+      if (original.url?.includes('/auth/login/')) {
+        return Promise.reject(err)
+      }
       original._retry = true
       const refresh = localStorage.getItem('refresh')
       if (refresh) {

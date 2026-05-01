@@ -322,7 +322,7 @@ export default function AdminUsers() {
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <p className="font-medium text-gray-900 dark:text-white">{user.username}</p>
-                            {user.is_superuser && <Badge color="amber">SU</Badge>}
+                            {user.is_superuser && <Badge color="amber">Superuser</Badge>}
                             {!user.is_superuser && user.is_staff && <Badge color="indigo">Staff</Badge>}
                           </div>
                           <p className="text-[11px] text-gray-400 dark:text-slate-500 mt-0.5">ID #{user.id}</p>
